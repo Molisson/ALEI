@@ -1,4 +1,4 @@
-# ALE Improvements
+# ALE Improvements (mici1234's branch before it was finally maintained by Molis)
 ALEI Icon (cc: broforce1, remade by Prosu)
 
 ![ALEI Icon](/icon.png "ALEI Icon")
