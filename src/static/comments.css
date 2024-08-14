@@ -1,0 +1,40 @@
+.alei-comment-box {
+    background-color: var(--comment-background-color);
+    width: 100%;
+    box-sizing: border-box;
+    border: 2px solid var(--comment-border-color);
+    margin: 2px 0px;
+    padding: 4px;
+    overflow: hidden;
+}
+
+.alei-comment-box__text-element {
+    color: var(--comment-color);
+    font-size: 11px;
+    font-family: "Liberation Mono", "Courier New", monospace;
+    font-style: italic;
+    line-height: 1.5em;
+}
+
+.alei-comment-box__prefix {
+    width: 20px;
+    float: left;
+    white-space: pre-wrap;
+}
+
+.alei-comment-box__text-area {
+    width: calc(100% - 20px); /* - prefix width*/
+    resize: none;
+    scrollbar-width: none; /*necessary to fix a weird bug with auto resize*/
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+.alei-comment-adder-button {
+    color: var(--comment-adder-button-color);
+}
+
+.alei-comment-remover-button {
+    color: var(--comment-remover-button-color);
+}

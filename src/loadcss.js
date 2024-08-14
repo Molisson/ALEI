@@ -1,5 +1,10 @@
-import "./static/aleistyles.css";
+// the order of these imports is significant. sorry.
+// a style that overrides some default value should be imported after the thing with the default value
 import "./static/themes.css";
+import "./static/paramsidebuttons.css";
+import "./static/overridestyles.css";
+import "./static/aleistyles.css";
+import "./static/comments.css";
 
 /*
 for some reason the vanilla ThemeSet function does this:
@@ -14,11 +19,11 @@ fixWebpackStyleSheets fixes that.
 const webpackStylesheetName = "style-from-webpack";
 
 const themes = {
-    0: "blueTheme",
-    1: "darkTheme",
-    2: "purpleTheme",
-    3: "greenTheme",
-    4: "aleidarkTheme",
+    0: "blue-theme",
+    1: "dark-theme",
+    2: "purple-theme",
+    3: "green-theme",
+    4: "alei-dark-theme",
 }
 
 export function patchThemeSet() {

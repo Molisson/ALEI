@@ -1,6 +1,11 @@
 import * as loadcss from "./loadcss.js";
 import { parse as alescriptParse } from "./alescript.js";
-import {ALEI_Renderer_OnDocumentLoad as Renderer_initialize} from "./renderer.user.js"
+import { ALEI_Renderer_OnDocumentLoad as Renderer_initialize } from "./renderer.user.js"
+import { getALEIMapDataFromALEIMapDataObject, loadALEIMapDataIntoUse, patchSaveThisMap_aleimapdata } from "./aleimapdata/aleimapdata.js";
+import { getCommentPositions } from "./comments/commentdata.js";
+import { makeCommentBox, setCurrentCommentedTrigger, setCommentsResizeObserverTarget, setupCommentBoxAfterAddedToDOM } from "./comments/commenttextarea.js";
+import { rparamsWasUpdated } from "./paramsidebuttons/paramsidebuttons.js";
+import { registerCommentAdderButton, registerCommentRemoverButton } from "./comments/commentbuttons.js";
 
 "use strict";
 
@@ -2591,7 +2596,7 @@ document.addEventListener("keydown", e => {
 
 function doTooltip() {
     let tooltip = document.createElement("p");
-    tooltip.id = "ALEI_tooltip";
+    tooltip.id = "alei-tooltip";
 
     document.body.append(tooltip);
 
@@ -3176,7 +3181,11 @@ function ServerRequest_handleMapData(mapCode) {
         currentElement.pm[key] = value;
 
     }
+
     if(aleiSettings.extendedTriggers) parseExtendedTriggers();
+
+    getALEIMapDataFromALEIMapDataObject(); //map data object >>> aleiMapData
+    loadALEIMapDataIntoUse(); //aleiMapData >>> data in use
 }
 
 function handleServerRequestResponse(request, operation, response) {
@@ -3428,6 +3437,31 @@ function patchUpdateGUIParams() {
 
         origUGP();
         addAdditionalButtons();
+
+        // comments integration
+        if (!edit_triggers_as_text && selected.length == 1 && selected[0]._class == "trigger") {
+            setCurrentCommentedTrigger(selected[0]);
+            const rparams = document.getElementById("rparams");
+            setCommentsResizeObserverTarget(rparams);
+            const commentPositions = getCommentPositions(selected[0]);
+            for (const position of commentPositions) {
+                const actionNum = position + 1;
+                const actionTypeInputElement = rparams.querySelector(`#pm_actions_${actionNum}_type`)
+                if (actionTypeInputElement === null) {
+                    continue;
+                }
+                const elementThatIsBelow = actionTypeInputElement.parentElement;
+                const commentBox = makeCommentBox(position);
+                const separator = document.createElement("div");
+                separator.style.height = "2px";
+                rparams.insertBefore(commentBox, elementThatIsBelow);
+                rparams.insertBefore(separator, elementThatIsBelow);
+                setupCommentBoxAfterAddedToDOM(commentBox);
+            }
+        }
+        ////////////////////////
+
+        rparamsWasUpdated(); // paramsidebuttons integration. needs to be after addAdditionalButtons
 
         GenParamValEscapeDoubleQuotes = false;
         if(sortRequired) SortObjectsByPriority();
@@ -5335,6 +5369,12 @@ let ALE_start = (async function() {
     addFunctionToWindow();
     createALEISettingsMenu();
     patchDeleteSelection();
+
+    patchSaveThisMap_aleimapdata();
+
+    // register param side buttons
+    registerCommentAdderButton();
+    registerCommentRemoverButton();
 
     if(isNative) {
         checkForUpdates();

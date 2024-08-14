@@ -1,3 +1,4 @@
+/*todo: rename these first ones to follow BEM naming methodology*/
 .ALEI_settingMenuText {
     font-size: 14px;
     width: 150px;
@@ -32,7 +33,7 @@
     color: #fbfbfb;
 }
 
-#ALEI_tooltip {
+#alei-tooltip {
     font-size: 16px;
     font-family: monospace;
     color: #eee;
@@ -44,4 +45,13 @@
     position: absolute;
     left: 100px;
     top: -100px;
+}
+
+#gui-render-info {
+    margin-left: 18px;
+}
+
+.gui-render-info__text {
+    padding: 0;
+    margin: 0;
 }

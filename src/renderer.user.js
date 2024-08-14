@@ -847,17 +847,41 @@ function RenderFrame() {
 }
 
 function DisplayStatistics() {
-    let element = document.getElementById("gui_renderInfo");
-    if(element == undefined) {
+    let element = document.getElementById("gui-render-info");
+    let fpsText;
+    let renderedObjectsCountText;
+    if (element !== null) {
+        fpsText = element.children[0];
+        renderedObjectsCountText = element.children[1];
+    }
+    else {
         element = document.createElement("div");
-        element.id = "gui_renderInfo";
-        element.innerHTML = "Waiting for data...";
+        element.id = "gui-render-info";
+
+        fpsText = document.createElement("p");
+        fpsText.className = "gui-render-info__text";
+
+        renderedObjectsCountText = document.createElement("p");
+        renderedObjectsCountText.className = "gui-render-info__text";
+
+        if (isNative) {
+            fpsText.style.padding = 0;
+            fpsText.style.margin = 0;
+            renderedObjectsCountText.style.padding = 0;
+            renderedObjectsCountText.style.margin = 0;
+        }
+
+        element.appendChild(fpsText);
+        element.appendChild(renderedObjectsCountText);
+
         window.right_panel.childNodes[0].insertBefore(element, document.getElementById("gui_params"));
     }
-    let text = " ";
+    fpsText.textContent = `Renderer FPS: ${displayFPS}`;
+    renderedObjectsCountText.textContent = `Rendered Object: ${totalRenderedObjects} / ${window.es.length}`;
+    /*let text = " ";
     text += `Renderer FPS: ${displayFPS} <br>`;
     text += `Rendered Object: ${totalRenderedObjects} / ${window.es.length}`;
-    element.innerHTML = text.slice(1).replaceAll("\n", "<br>");
+    element.innerHTML = text.slice(1).replaceAll("\n", "<br>");*/
 }
 
 function getTimeMs() {return (new Date()).getTime()}

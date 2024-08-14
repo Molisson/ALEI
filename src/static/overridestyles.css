@@ -1,0 +1,34 @@
+/*
+these padding and margin changes have almost no visual effect except for allowing comment buttons to bypass overflow: hidden on the x-axis
+*/
+#right_panel .rightui_cntnt {
+    padding-left: 0px; /* normally 14px*/
+}
+
+#objboxhider {
+    margin-left: 18px;
+    width: calc(100% - 18px);
+}
+
+#gui_objbox {
+    margin-left: 18px;
+}
+
+#gui_sel_info {
+    padding-left: 18px;
+}
+
+#rparams {
+    padding-left: 18px;
+    position: relative; /*setting position to relative so the comment elements can be absolutely positioned inside of it*/
+}
+
+
+
+#mrdimlights {
+    z-index: 200;
+}
+
+.mrpopup {
+    z-index: 300;
+}

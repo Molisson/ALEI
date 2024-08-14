@@ -32,5 +32,5 @@ module.exports = {
             headers: headers,
         }),
     ],
-    devtool: "inline-source-map",
+    /*devtool: "inline-source-map",*/ // increases file size about 5x
 };

@@ -1,0 +1,38 @@
+.alei-param-side-buttons-container {
+    width: 18px;
+    height: 60px;
+    position: absolute;
+    left: 1px;
+    display: none;
+}
+
+.alei-param-side-buttons-container--visible {
+    display: block;
+}
+
+.alei-param-side-buttons-container:hover .alei-param-side-button {
+    opacity: 100%;
+}
+
+.alei-param-side-button {
+    color: #f0f0f0;
+    background-color: var(--param-side-button-background-color);
+    border: none;
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: bold;
+    display: block;
+    width: 15px;
+    height: 15px;
+    padding: 0;
+    opacity: 40%;
+    margin-top: 1px;
+}
+
+.alei-param-side-button:hover {
+    background-color: var(--param-side-button-hover-background-color);
+}
+
+.alei-param-side-button:active {
+    background-color: var(--param-side-button-active-background-color);
+}

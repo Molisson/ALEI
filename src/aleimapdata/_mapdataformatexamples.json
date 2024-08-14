@@ -1,0 +1,24 @@
+{
+    "_comment": "This file isn't used anywhere in the code, its only purpose is to store all the formats to make this thing easier to update and maintain",
+    "format version 1": {
+        "v": 1,
+        "content": {
+            "comments": {
+                "#trigger*1": [
+                    {
+                        "0": "Hello! This is a comment.",
+                        "5": "This is another comment in position 5"
+                    }
+                ],
+                "#trigger*2": [
+                    {
+                        "0": "There are two triggers with the uid #trigger*2 (for some reason)"
+                    },
+                    {
+                        "0": "The comments in this block would be placed in the trigger with the higher index in es"
+                    }
+                ]
+            }
+        }
+    }
+}

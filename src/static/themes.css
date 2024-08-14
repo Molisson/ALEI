@@ -1,14 +1,26 @@
-/* css variables go in these. */
-
-:root, .blueTheme {
-    --warning-go-away-pls: 0;
+:root, .blue-theme {
+    --param-side-button-background-color: #212429;
+    --param-side-button-hover-background-color: #223146;
+    --param-side-button-active-background-color: #2e3e53;
+    --comment-background-color: #314664;
+    --comment-border-color: #41546f;
+    --comment-color: #5a92df;
+    --comment-adder-button-color: #2781fb;
+    --comment-remover-button-color: #aa0000;
 }
 
-.darkTheme, .purpleTheme, .greenTheme {
-    --warning-go-away-pls: 0;
+.dark-theme, .purple-theme, .green-theme {
+    --param-side-button-background-color: #2d2d2d;
+    --param-side-button-hover-background-color: #3b3b3b;
+    --param-side-button-active-background-color: #494949;
+    --comment-background-color: #292929;
+    --comment-border-color: #494949;
+    --comment-color: #7b7b7b;
+    --comment-adder-button-color: #8d8d8d;
+    --comment-remover-button-color: #a30b0b;
 }
 
 /*this is unused cuz theme changing needs to be reworked first*/
-.aleidarkTheme {
+.alei-dark-theme {
     --warning-go-away-pls: 0;
 }
