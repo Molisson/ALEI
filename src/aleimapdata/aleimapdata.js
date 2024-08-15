@@ -17,12 +17,13 @@ const initialMapData = {
 // save: data in use >>> aleiMapData >>> map data object 
 
 export let aleiMapData;
+initializeALEIMapData();
 
 // map data object >>> aleiMapData
 export function getALEIMapDataFromALEIMapDataObject() {
     const mapDataObject = findALEIMapDataObject();
     if (mapDataObject === null) {
-        aleiMapData = getInitialALEIMapData();
+        initializeALEIMapData();
     }
     else {
         aleiMapData = readFromALEIMapDataObject(mapDataObject);
@@ -93,18 +94,8 @@ export function saveToALEIMapDataObject() {
     }
 }
 
-export function patchSaveThisMap_aleimapdata() {
-    const old_SaveThisMap = unsafeWindow.SaveThisMap;
-
-    // this assumes that none of the data in use is stored in the entity parameters (entity.pm). otherwise the 
-    // data would end up in the xml. i don't think there's any reason to put the data in the parameters 
-    // specifically so just don't do that and this will work
-    unsafeWindow.SaveThisMap = function(temp_to_real_compile_data='', callback=null) {
-        updateALEIMapData(); //data in use >>> aleiMapData
-        saveToALEIMapDataObject(); //aleiMapData >>> map data object
-        
-        old_SaveThisMap(temp_to_real_compile_data, callback);
-    }
+export function initializeALEIMapData() {
+    aleiMapData = JSON.parse(JSON.stringify(initialMapData)); //make a deep copy
 }
 
 function clearDataInUse() {
@@ -119,10 +110,6 @@ function clearDataInUse() {
 function aleiMapDataHasContent() {
     const hasComments = Object.keys(aleiMapData.content.comments).length > 0;
     return hasComments;
-}
-
-function getInitialALEIMapData() {
-    return JSON.parse(JSON.stringify(initialMapData)); //make and return a deep copy
 }
 
 (function setupConsoleDebugFunctions() {

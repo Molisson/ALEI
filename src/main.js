@@ -1,7 +1,8 @@
 import * as loadcss from "./loadcss.js";
 import { parse as alescriptParse } from "./alescript.js";
 import { ALEI_Renderer_OnDocumentLoad as Renderer_initialize } from "./renderer.user.js"
-import { getALEIMapDataFromALEIMapDataObject, loadALEIMapDataIntoUse, patchSaveThisMap_aleimapdata } from "./aleimapdata/aleimapdata.js";
+import { getALEIMapDataFromALEIMapDataObject, loadALEIMapDataIntoUse } from "./aleimapdata/aleimapdata.js";
+import * as aleimapdatapatches from "./aleimapdata/aleimapdatapatches.js";
 import { getCommentPositions } from "./comments/commentdata.js";
 import { makeCommentBox, setCurrentCommentedTrigger, setCommentsResizeObserverTarget, setupCommentBoxAfterAddedToDOM } from "./comments/commenttextarea.js";
 import { rparamsWasUpdated } from "./paramsidebuttons/paramsidebuttons.js";
@@ -5370,7 +5371,8 @@ let ALE_start = (async function() {
     createALEISettingsMenu();
     patchDeleteSelection();
 
-    patchSaveThisMap_aleimapdata();
+    aleimapdatapatches.patchSaveThisMap();
+    aleimapdatapatches.patchStartNewMap();
 
     // register param side buttons
     registerCommentAdderButton();
