@@ -1,0 +1,398 @@
+body, td, th {
+    color: var(--body-td-th-color);
+}
+
+.objbox {
+    background-color: var(--objbox-background-color);
+}
+
+.selline1 {
+    background-color: var(--selline1-background-color);
+}
+
+@keyframes blnk {
+    0% {
+        background-color: var(--blnk-0-background-color);
+    }
+
+    100% {
+        background-color: var(--blnk-100-background-color);
+    }
+}
+
+@-webkit-keyframes blnk {
+    0% {
+        background-color: var(--blnk-0-background-color);
+    }
+
+    100% {
+        background-color: var(--blnk-100-background-color);
+    }
+}
+
+.selline0bl {
+    background-color: var(--selline0bl-background-color);
+}
+
+.topui {
+    background-color: var(--topui-background-color);
+    background-image: var(--topui-background-image);
+}
+
+.leftui {
+    background-color: var(--leftui-background-color);
+    border-right-color: var(--leftui-border-right-color);
+    background-image: var(--leftui-background-image);
+}
+
+.rightui {
+    background-color: var(--rightui-background-color);
+    border-left-color: var(--rightui-border-left-color);
+    background-image: var(--rightui-background-image);
+}
+
+.field_dis_left {
+    background-color: var(--field_dis_left-background-color);
+    color: var(--field_dis_left-color);
+}
+
+.field_dis_right {
+    background-color: var(--field_dis_right-background-color);
+    color: var(--field_dis_right-color);
+}
+
+.field_btn {
+    background-color: var(--field_btn-background-color);
+    color: var(--field_btn-color);
+}
+
+.field_btn:hover {
+    background-color: var(--field_btn-hover-background-color);
+    color: var(--field_btn-hover-color);
+}
+
+.field_btn:active {
+    background-color: var(--field_btn-active-background-color);
+    color: var(--field_btn-active-color);
+}
+
+.tool_btn {
+    border-color: var(--tool_btn-border-color);
+    background-color: var(--tool_btn-background-color);
+    color: var(--tool_btn-color);
+}
+
+.tool_btn:hover {
+    background-color: var(--tool_btn-hover-background-color);
+    color: var(--tool_btn-hover-color);
+    border-color: var(--tool_btn-hover-border-color);
+}
+
+.tool_btn:active {
+    background-color: var(--tool_btn-active-background-color);
+    color: var(--tool_btn-active-color);
+    border-color: var(--tool_btn-active-border-color);
+}
+
+.tool_btn2 {
+    border-color: var(--tool_btn2-border-color);
+    background-color: var(--tool_btn2-background-color);
+    color: var(--tool_btn2-color);
+}
+
+.tool_btn2:hover {
+    background-color: var(--tool_btn2-hover-background-color);
+    color: var(--tool_btn2-hover-color);
+    border-color: var(--tool_btn2-hover-border-color);
+}
+
+.tool_btn2:active {
+    background-color: var(--tool_btn2-active-background-color);
+    color: var(--tool_btn2-active-color);
+    border-color: var(--tool_btn2-active-border-color);
+}
+
+.c {
+    color: var(--c-color);
+}
+
+.p_u1 {
+    border-bottom-color: var(--p_u1-border-bottom-color);
+}
+
+.p_u2 {
+    border-bottom-color: var(--p_u2-border-bottom-color);
+}
+
+.pa1 {
+    color: var(--pa1-color);
+    background-color: var(--pa1-background-color);
+}
+
+.pa2 {
+    color: var(--pa2-color);
+    background-color: var(--pa2-background-color);
+}
+
+.pa2:hover {
+    background-color: var(--pa2-hover-background-color);
+}
+
+.pa2edit {
+    color: var(--pa2edit-color);
+    background-color: var(--pa2edit-background-color);
+    border-color: var(--pa2edit-border-color);
+}
+
+.opcode_field {
+    color: var(--opcode_field-color);
+    background-color: var(--opcode_field-background-color);
+    border-color: var(--opcode_field-border-color);
+}
+
+.gui_sel_info {
+    color: var(--gui_sel_info-color);
+}
+
+.parambox {
+    background-color: var(--parambox-background-color);
+    border-color: var(--parambox-border-color);
+}
+
+.paramactive:link, .paramactive:visited {
+    background-color: var(--paramactive-link-visited-background-color);
+    color: var(--paramactive-link-visited-color);
+}
+
+.paramactive:hover {
+    background-color: var(--paramactive-hover-background-color);
+}
+
+.paramactive:active {
+    background-color: var(--paramactive-active-background-color);
+}
+
+.paraminbox:link, .paraminbox:visited {
+    background-color: var(--paraminbox-link-visited-background-color);
+    color: var(--paraminbox-link-visited-color);
+}
+
+.paraminbox:hover {
+    background-color: var(--paraminbox-hover-background-color);
+}
+
+.paraminbox:active {
+    background-color: var(--paraminbox-active-background-color);
+}
+
+::-webkit-scrollbar-track {
+    background-color: var(--webkit-scrollbar-track-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--webkit-scrollbar-thumb-color);
+}
+
+#rparams, #gui_objbox, #tools_box, #parambox {
+    scrollbar-color: var(--scrollbar-color-thumb) var(--scrollbar-color-track);
+}
+
+.notediv {
+    background-color: var(--notediv-background-color);
+}
+
+.notediv_term_strict {
+    background-color: var(--notediv_term_strict-background-color);
+}
+
+.notediv_term_nonstrict {
+    background-color: var(--notediv_term_nonstrict-background-color);
+}
+
+.error {
+    color: var(--error-color);
+    text-shadow: var(--error-text-shadow-color) 0px 0px 5px;
+}
+
+#mrdimlights {
+    background-color: var(--mrdimlights-background-color);
+}
+
+#mrtitle {
+    background-color: var(--mrtitle-background-color);
+}
+
+closebox {
+    background-color: var(--closebox-background-color);
+    color: var(--closebox-color);
+}
+
+#mrbox {
+    background-color: var(--mrbox-background-color);
+}
+
+.field_input {
+    background-color: var(--field_input-background-color);
+    color: var(--field_input-color);
+}
+
+.btn {
+    background-color: var(--btn-background-color);
+    color: var(--btn-color);
+}
+
+.btn:hover {
+    background-color: var(--btn-hover-background-color);
+    color: var(--btn-hover-color);
+}
+
+.btn:active {
+    background-color: var(--btn-active-background-color);
+    color: var(--btn-active-color);
+}
+
+#game_overlay {
+    background-color: var(--game_overlay-background-color);
+}
+
+a.basic:link, a.basic:visited {
+    color: var(--a-basic-link-visited-color);
+}
+
+a.basic:hover {
+    color: var(--a-basic-hover-color);
+}
+
+a.basic:active {
+    color: var(--a-basic-active-color);
+}
+
+.mobile_panel {
+    background-color: var(--mobile_panel-background-color);
+}
+
+.mobile_btn {
+    background-color: var(--mobile_btn-background-color);
+    color: var(--mobile_btn-color);
+    border-color: var(--mobile_btn-border-color);
+}
+
+.mobile_btn:active, .mobile_btn2 {
+    background-color: var(--mobile_btn-active-btn2-background-color);
+    color: var(--mobile_btn-active-btn2-color);
+    border-color: var(--mobile_btn-active-btn2-border-color);
+}
+
+.img_option {
+    border-color: var(--img_option-border-color);
+    background-color: var(--img_option-background-color);
+}
+
+.img_option_selected {
+    background-color: var(--img_option_selected-background-color);
+}
+
+.img_option:hover {
+    background-color: var(--img_option-hover-background-color);
+    color: var(--img_option-hover-color);
+}
+
+.img_option:active {
+    background-color: var(--img_option-active-background-color);
+    color: var(--img_option-active-color);
+}
+
+.img_option div.imgdiv {
+    background-color: var(--img_option-div-imgdiv-background-color);
+}
+
+.list_group {
+    background-color: var(--list_group-background-color);
+    border-bottom-color: var(--list_group-border-bottom-color);
+}
+
+.list_mod {
+    background-color: var(--list_mod-background-color);
+}
+
+.list_group:hover {
+    background-color: var(--list_group-hover-background-color);
+}
+
+.list_group:active {
+    background-color: var(--list_group-active-background-color);
+}
+
+.image_list_collapsable {
+    background-color: var(--image_list_collapsable-background-color);
+}
+
+#image_context {
+    background-color: var(--image_context-background-color);
+    border-color: var(--image_context-border-color);
+}
+
+#image_context div {
+    color: var(--image_context-div-color);
+}
+
+#image_context div:hover {
+    color: var(--image_context-div-hover-color);
+    background-color: var(--image_context-div-hover-background-color);
+}
+
+#image_context div:active {
+    color: var(--image_context-div-active-color);
+    background-color: var(--image_context-div-active-background-color);
+}
+
+.user_link a:link, .user_link a:visited {
+    color: var(--user_link-link-visited-color);
+}
+
+.user_link a:hover {
+    color: var(--user_link-hover-color);
+}
+
+.user_link a:active {
+    color: var(--user_link-active-color);
+}
+
+.search_bar {
+    background-color: var(--search_bar-background-color);
+}
+
+.search_bar input {
+    background-color: var(--search_bar-input-background-color);
+    color: var(--search_bar-input-color);
+}
+
+.search_bar input[type="text"] {
+    background-color: var(--search_bar-input-text-background-color);
+}
+
+.search_bar input[type="button"]:hover {
+    background-color: var(--search_bar-input-button-hover-background-color);
+}
+
+.search_bar input[type="button"]:active {
+    background-color: var(--search_bar-input-button-active-background-color);
+}
+
+.lin2b, .lin2b:link, .lin2b:visited {
+    color: var(--lin2b-color);
+    background-color: var(--lin2b-background-color);
+    border-color: var(--lin2b-border-color);
+}
+
+.lin2b:hover {
+    color: var(--lin2b-hover-color);
+    background-color: var(--lin2b-hover-background-color);
+    border-color: var(--lin2b-hover-border-color);
+}
+
+.lin2b:focus, .lin2b:active {
+    border-color: var(--lin2b-focus-active-border-color);
+    background-color: var(--lin2b-focus-active-background-color);
+    color: var(--lin2b-focus-active-color);
+}

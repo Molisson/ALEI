@@ -1,4 +1,5 @@
-import * as loadcss from "./loadcss.js";
+import { fixWebpackStyleSheets } from "./loadcss.js";
+import { replaceThemeSet, patchSaveBrowserSettings, initTheme, addAleiThemeButtons } from "./themes.js";
 import { parse as alescriptParse } from "./alescript.js";
 import { ALEI_Renderer_OnDocumentLoad as Renderer_initialize } from "./renderer.user.js"
 import { getALEIMapDataFromALEIMapDataObject, loadALEIMapDataIntoUse } from "./aleimapdata/aleimapdata.js";
@@ -78,7 +79,7 @@ let aleiSettings = {
     showSameParameters: readStorage("ALEI_ShowSameParameters",      true , (val) => val === "true"),
     rematchUID:         readStorage("ALEI_RemapUID",                false, (val) => val === "true"),
     //showIDs:            readStorage("ALEI_ShowIDs",               false, (val) => val === "true"),
-    blackTheme:         readStorage("ALEI_BlackTheme",              false, (val) => val === "true"),
+    //blackTheme:         readStorage("ALEI_BlackTheme",              false, (val) => val === "true"),
     gridBasedOnSnapping:readStorage("ALEI_gridBasedOnSnapping",     true,  (val) => val === "true"),
     //showZIndex:         readStorage("ALEI_ShowZIndex",              false, (val) => val === "true"),
     renderObjectNames:  readStorage("ALEI_RenderObjectNames",       true,  (val) => val === "true"),
@@ -1085,6 +1086,7 @@ function onToolUpdate() {
     addSnappingOptions_helper();
     addRematchUIOptions_helper();
     addPreviewNamesOptions_helper();
+    addAleiThemeButtons();
 }
 
 function patchUpdateTools() {
@@ -1638,113 +1640,6 @@ function patchRandomizeName() {
 
 function patchAllowedCharacters() {
     allowed_string_chars += "<>";
-}
-
-function getRuleBySelector(selector) {
-    let rules = document.styleSheets[0].rules;
-    let rule;
-
-    for (let i = 0; i < rules.length; i++) {
-        if (rules[i].selectorText == selector) {
-            rule = rules[i];
-        }
-    }
-
-    return rule;
-}
-
-window.blackThemeUndos = [];
-
-function setStyle(selector, style, value, isUndo = false) {
-    if(!isUndo) blackThemeUndos.push([
-        selector,
-        style,
-        getRuleBySelector(selector).style[style]
-    ]);
-    getRuleBySelector(selector).style[style] = value;
-}
-
-function UndoBlackTheme() {
-    ThemeSet(0);
-    for(let undo of blackThemeUndos) {
-        setStyle(undo[0], undo[1], undo[2], true);
-    }
-}
-
-function blackTheme() {
-    ThemeSet(0);
-
-    window.THEME = 4;
-
-    setStyle(".topui", "backgroundSize", "0px"); // removes top ui detail
-    setStyle(".leftui", "backgroundSize", "0px"); // removes left ui detail
-    setStyle(".rightui", "backgroundSize", "0px"); // removes right ui detail
-    setStyle(".topui", "backgroundColor", "#0A0A0A");
-    setStyle(".leftui", "backgroundColor", "#0A0A0A");
-    setStyle(".rightui", "backgroundColor", "#0A0A0A");
-    setStyle(".field_btn", "backgroundColor", "#1E1E1E");
-    setStyle(".tool_btn", "backgroundColor", "#1E1E1E");
-    setStyle(".tool_btn", "border", ""); // tool button outline
-    setStyle(".tool_btn2", "backgroundColor", "#4566AB");
-    setStyle(".tool_btn2", "border", "1px solid #FFFFFF20");
-    setStyle(".field_btn", "color", "#FFFFFFD0");
-    setStyle(".tool_btn", "color", "#FFFFFFD0");
-    setStyle(".tool_btn2", "color", "#FFFFFFD0");
-    setStyle(".gui_sel_info", "color", "#FFFFFFD0");
-    setStyle(".c", "color", "#FFFFFF20");
-    setStyle(".pa1", "color", "#808080");
-    setStyle(".pa2", "color", "#FFFFFFD0");
-    setStyle(".field_dis_left", "color", "#FFFFFFD0");
-    setStyle(".field_dis_right", "color", "#FFFFFFD0");
-    setStyle(".p_u1", "border", "");
-    setStyle(".p_u2", "border", "");
-    setStyle(".pa1", "backgroundColor", "#101010");
-    setStyle(".pa2", "backgroundColor", "#1B1B1B");
-    setStyle(".objbox", "backgroundColor", "#131313");
-    setStyle(".field_dis_left", "backgroundColor", "#1E1E1E");
-    setStyle(".field_dis_right", "backgroundColor", "#131313");
-    setStyle(".selline1", "backgroundColor", "#7A1314"); // selected object/current map
-    setStyle(".tool_btn:hover", "backgroundColor", "#5f8dd3");
-    setStyle(".tool_btn:hover", "border", "1px solid #FFFFFF20");
-    setStyle(".tool_btn:hover", "color", "#FFFFFFD0");
-    setStyle(".tool_btn2:hover", "backgroundColor", "#5077C4");
-    setStyle(".tool_btn2:hover", "border", "1px solid #FFFFFF20");
-    setStyle(".tool_btn2:hover", "color", "#FFFFFFD0");
-    setStyle(".field_btn:hover", "backgroundColor", "#353535");
-    setStyle(".field_btn:hover", "color", "#FFFFFFD0");
-    setStyle(".tool_btn:active", "backgroundColor", "#151515"); // object list hold fill
-    setStyle(".tool_btn:active", "border", "1px solid #FFFFFF20"); // object list hold outline
-    setStyle(".tool_btn:active", "color", "#FFFFFFD0"); // object list hold text
-    setStyle(".tool_btn2:active", "backgroundColor", "#39558C"); // toggled active button hold fill
-    setStyle(".tool_btn2:active", "border", "1px solid #FFFFFF20"); // toggled active button hold outline
-    setStyle(".tool_btn2:active", "color", "#FFFFFFD0"); // toggled active button hold text
-    setStyle(".field_btn:active", "backgroundColor", "#151515"); // field button hold fill
-    setStyle(".field_btn:active", "color", "#CCC"); // field button hold text
-    setStyle("#mrtitle", "backgroundColor", "#1E1E1E"); // map list overhead
-    setStyle("#mrbox", "backgroundColor", "#0A0A0A"); // maplist border fill
-    setStyle(".field_input", "backgroundColor", "#131313"); // map id field
-    setStyle(".field_input", "color", "#CCC"); // what
-    setStyle(".btn", "backgroundColor", "#1E1E1E"); // map button
-    setStyle(".btn", "color", "#CCC"); // what
-    setStyle(".btn:hover", "backgroundColor", "#353535"); // map button hover
-    setStyle(".btn:hover", "color", "#CCC"); // what is this 8
-    setStyle(".btn:active", "backgroundColor", "#151515"); // map button hold
-    setStyle(".btn:active", "color", "#CCC"); // what is this 10
-    setStyle("closebox", "backgroundColor", "#353535"); // decor list close button
-    setStyle("closebox", "color", "#CCC"); // what
-    setStyle(".list_group", "backgroundColor", "#1E1E1E"); // decor list category
-    setStyle(".list_group", "borderBottom", ""); // what is this 14
-    setStyle(".list_group:hover", "backgroundColor", "#353535"); // decor list category hover
-    setStyle(".list_group:active", "backgroundColor", "#0A0A0A"); // decor list category hold
-    setStyle(".image_list_collapsable", "backgroundColor", "#0A0A0A"); // decor list background
-    setStyle(".img_option_selected", "backgroundColor", "#4566AB40"); // current decor
-    setStyle(".rightui", "borderLeft", ""); // removes right ui border
-    setStyle(".leftui", "borderRight", ""); // removes left ui order
-    setStyle("::-webkit-scrollbar-thumb", "backgroundColor", "#888"); // what is this
-    setStyle("#rparams, #gui_objbox, #tools_box, #parambox", "scrollbarColor", ""); // what is this
-    setStyle("#rparams, #gui_objbox, #tools_box, #parambox", "scrollbarWidth", ""); // what is this
-    setStyle("#tools_box", "overflow-y", "hidden"); // what is this
-    setStyle("#tools_box", "overflow-y", "auto"); // what is this
 }
 
 function getObjectBox(obj) {
@@ -3495,7 +3390,7 @@ function createALEISettingsMenu() {
     mainWindow.setAttribute("class", "mrpopup");
 
     let title = document.createElement("div");
-    title.innerHTML = "ALEI Setting";
+    title.innerHTML = "ALEI Settings";
     title.setAttribute("id", "mrtitle"); // Eric, what is this crap ?
     mainWindow.appendChild(title);
 
@@ -3560,6 +3455,7 @@ function createALEISettingsMenu() {
     }
     box.innerHTML += "NOTE: Settings in yellow text requires page refresh to be applied.<br>";
     addButton("Clear Backup", "clearMapBackups", () => {
+        if (!confirm("This will remove map backups from the browser data. Continue?")) return;
         let removed = [];
         for (let key of Object.keys(localStorage)) {
             if(!(key.slice(0, "pb2_map".length) == "pb2_map")) continue;
@@ -3650,14 +3546,6 @@ function createALEISettingsMenu() {
         "showSameParameters",
         PR_ShowHide
     );
-
-    // Black theme.
-    registerButton("blackTheme", [true, false], "blackTheme");
-    addText("Black theme:", false);
-    addBinaryOption("Yes", "No", "ALEI_BlackTheme", "blackTheme", "blackTheme", (status) => {
-        if(status) blackTheme()
-        else UndoBlackTheme();
-    });
 
     aleiMakeSettingButtons(
         "Grid by snap:",
@@ -5268,7 +5156,7 @@ function patchRender() {
         Renderer_initialize();
         return;
     };
-    if(!aleiSettings.blackTheme) return;
+    if(THEME != 4) return;
     // We should only patch for black theme, because setting render makes things lag for no apparent reason.
 
     let fn = ALE_Render.toString();
@@ -5316,8 +5204,11 @@ let ALE_start = (async function() {
 
     patchServerRequest();
 
-    loadcss.fixWebpackStyleSheets();
-    loadcss.patchThemeSet();
+    // style sheets and theme stuff
+    fixWebpackStyleSheets();
+    replaceThemeSet();
+    patchSaveBrowserSettings();
+    initTheme();
 
     updateStyles();
     updateSkins();
@@ -5353,9 +5244,6 @@ let ALE_start = (async function() {
     patchTeamList();
     if(aleiSettings.orderedNaming) patchRandomizeName();
     patchAllowedCharacters();
-    if (aleiSettings.blackTheme) {
-        blackTheme();
-    }
     addProjectileModels();
     patchSpecialValue();
     UpdateTools();

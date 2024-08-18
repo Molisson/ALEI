@@ -1,0 +1,64 @@
+/* set the css variables for the css stuff that comes from alei */
+
+:root, .blue-theme {
+    --settings-menu-label-background-color: #476082;
+    --settings-menu-label-color: #bfcad9;
+    --settings-menu-button-background-color: #26354a;
+    --settings-menu-button-border-color: #26354a;
+    --settings-menu-button-color: #c1c9d3;
+    --settings-menu-button-hover-background-color: #596a83;
+    --settings-menu-button-hover-color: #f5faff;
+    --settings-menu-button-clicked-background-color: #91a5c1;
+    --settings-menu-button-clicked-color: #fbfbfb;
+    --comment-background-color: #314664;
+    --comment-border-color: #41546f;
+    --comment-color: hsl(215, 70%, 60%);
+    --comment-adder-button-color: hsl(215, 95%, 55%);
+    --comment-remover-button-color: hsl(0, 100%, 35%);
+    --param-side-button-background-color: hsl(215, 35%, 15%);
+    --param-side-button-hover-background-color: hsl(215, 35%, 20%);
+    --param-side-button-active-background-color: hsl(215, 35%, 25%);
+    --gui-render-info-color: #fff;
+}
+
+.dark-theme, .purple-theme, .green-theme {
+    --settings-menu-label-background-color: #3b3b3b;
+    --settings-menu-label-color: #ccc;
+    --settings-menu-button-background-color: #555;
+    --settings-menu-button-border-color: #555;
+    --settings-menu-button-color: #aaa;
+    --settings-menu-button-hover-background-color: #666;
+    --settings-menu-button-hover-color: #ddd;
+    --settings-menu-button-clicked-background-color: #888;
+    --settings-menu-button-clicked-color: #eee;
+    --comment-background-color: #292929;
+    --comment-border-color: #353535;
+    --comment-color: #7b7b7b;
+    --comment-adder-button-color: #8d8d8d;
+    --comment-remover-button-color: hsl(0, 90%, 35%);
+    --param-side-button-background-color: #2d2d2d;
+    --param-side-button-hover-background-color: #3b3b3b;
+    --param-side-button-active-background-color: #494949;
+    --gui-render-info-color: #aaa;
+}
+
+.alei-dark-theme {
+    --settings-menu-label-background-color: #1d1d1d;
+    --settings-menu-label-color: #bbb;
+    --settings-menu-button-background-color: #333;
+    --settings-menu-button-border-color: #333;
+    --settings-menu-button-color: #999;
+    --settings-menu-button-hover-background-color: #444;
+    --settings-menu-button-hover-color: #ccc;
+    --settings-menu-button-clicked-background-color: #666;
+    --settings-menu-button-clicked-color: #ddd;
+    --comment-background-color: #161616;
+    --comment-border-color: #202020;
+    --comment-color: #808080;
+    --comment-adder-button-color: #808080;
+    --comment-remover-button-color: hsl(0, 90%, 35%);
+    --param-side-button-background-color: #202020;
+    --param-side-button-hover-background-color: #303030;
+    --param-side-button-active-background-color: #404040;
+    --gui-render-info-color: #fff;
+}

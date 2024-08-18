@@ -1,0 +1,521 @@
+/* set the css variables for the css stuff that comes from vanilla ale */
+
+:root, blue-theme {
+    --body-td-th-color: rgb(255, 255, 255);
+
+    --objbox-background-color: rgb(38, 53, 74);
+
+    --selline1-background-color: rgb(60, 80, 110);
+
+    --blnk-0-background-color: rgb(117, 157, 215);
+    --blnk-100-background-color: rgb(88, 118, 162);
+
+    --selline0bl-background-color: rgb(88, 118, 162);
+
+    --topui-background-color: rgb(62, 88, 123);
+    --topui-background-image: url(htile.gif);
+
+    --leftui-background-color: rgb(46, 64, 90);
+    --leftui-border-right-color: rgb(21, 46, 78);
+    --leftui-background-image: url(vti.gif);
+
+    --rightui-background-color: rgb(46, 64, 90);
+    --rightui-border-left-color: rgb(21, 46, 78);
+    --rightui-background-image: url(vti.gif);
+
+    --field_dis_left-background-color: rgb(71, 96, 130);
+    --field_dis_left-color: rgb(116, 143, 181);
+
+    --field_dis_right-background-color: rgb(82, 108, 144);
+    --field_dis_right-color: rgb(173, 198, 232);
+
+    --field_btn-background-color: rgb(46, 64, 90);
+    --field_btn-color: rgb(173, 198, 232);
+
+    --field_btn-hover-background-color: rgb(38, 54, 77);
+    --field_btn-hover-color: rgb(221, 235, 255);
+
+    --field_btn-active-background-color: rgb(21, 30, 44);
+    --field_btn-active-color: rgb(250, 244, 152);
+
+    --tool_btn-border-color: rgb(38, 53, 74);
+    --tool_btn-background-color: rgb(38, 53, 74);
+    --tool_btn-color: rgb(173, 198, 232);
+
+    --tool_btn-hover-background-color: rgb(32, 45, 63);
+    --tool_btn-hover-color: rgb(221, 235, 255);
+    --tool_btn-hover-border-color: rgb(32, 45, 63);
+
+    --tool_btn-active-background-color: rgb(25, 35, 48);
+    --tool_btn-active-color: rgb(250, 244, 152);
+    --tool_btn-active-border-color: rgb(25, 35, 48);
+
+    --tool_btn2-border-color: rgb(104, 135, 180);
+    --tool_btn2-background-color: rgb(65, 91, 128);
+    --tool_btn2-color: rgb(173, 198, 232);
+
+    --tool_btn2-hover-background-color: rgb(65, 91, 128);
+    --tool_btn2-hover-color: rgb(221, 235, 255);
+    --tool_btn2-hover-border-color: rgb(104, 135, 180);
+
+    --tool_btn2-active-background-color: rgb(65, 91, 128);
+    --tool_btn2-active-color: rgb(250, 244, 152);
+    --tool_btn2-active-border-color: rgb(104, 135, 180);
+
+    --c-color: rgba(173, 198, 232, 0.8);
+
+    --p_u1-border-bottom-color: rgb(52, 70, 96);
+
+    --p_u2-border-bottom-color: rgb(64, 87, 122);
+
+    --pa1-color: rgb(129, 156, 192);
+    --pa1-background-color: rgb(60, 80, 110);
+
+    --pa2-color: rgb(173, 198, 232);
+    --pa2-background-color: rgb(74, 100, 137);
+
+    --pa2-hover-background-color: rgb(80, 109, 149);
+
+    --pa2edit-color: rgb(255, 255, 255);
+    --pa2edit-background-color: rgb(74, 115, 114);
+    --pa2edit-border-color: rgb(0, 0, 0);
+
+    --opcode_field-color: rgb(255, 255, 255);
+    --opcode_field-background-color: rgb(0, 0, 0);
+    --opcode_field-border-color: rgb(0, 0, 0);
+
+    --gui_sel_info-color: rgb(94, 118, 152);
+
+    --parambox-background-color: rgba(0, 0, 0, 0.8);
+    --parambox-border-color: rgb(0, 0, 0);
+
+    --paramactive-link-visited-background-color: rgba(100, 150, 255, 0.4);
+    --paramactive-link-visited-color: rgb(255, 255, 255);
+
+    --paramactive-hover-background-color: rgba(100, 150, 255, 0.7);
+
+    --paramactive-active-background-color: rgba(100, 150, 255, 0.7);
+
+    --paraminbox-link-visited-background-color: rgba(144, 255, 0, 0);
+    --paraminbox-link-visited-color: rgb(255, 255, 255);
+
+    --paraminbox-hover-background-color: rgba(144, 255, 0, 0.4);
+
+    --paraminbox-active-background-color: rgba(144, 255, 0, 0.7);
+
+    --webkit-scrollbar-track-color: rgba(0, 0, 0, 0.2);
+
+    --webkit-scrollbar-thumb-color: rgb(112, 136, 172);
+
+    --scrollbar-color-thumb: rgb(76, 96, 125);
+    --scrollbar-color-track: rgb(43, 58, 79);
+
+    --notediv-background-color: rgba(0, 0, 0, 0.8);
+
+    --notediv_term_strict-background-color: rgba(150, 0, 0, 0.8);
+
+    --notediv_term_nonstrict-background-color: rgba(0, 0, 0, 0.8);
+
+    --error-color: rgb(255, 119, 119);
+    --error-text-shadow-color: rgb(255, 0, 0);
+
+    --mrdimlights-background-color: rgba(0, 0, 0, 0.8);
+
+    --mrtitle-background-color: rgb(97, 124, 164);
+
+    --closebox-background-color: rgb(128, 155, 195);
+    --closebox-color: black;
+
+    --mrbox-background-color: rgb(62, 88, 123);
+
+    --field_input-background-color: rgb(46, 64, 90);
+    --field_input-color: rgb(173, 198, 232);
+
+    --btn-background-color: rgb(46, 64, 90);
+    --btn-color: rgb(173, 198, 232);
+
+    --btn-hover-background-color: rgb(38, 54, 77);
+    --btn-hover-color: rgb(221, 235, 255);
+
+    --btn-active-background-color: rgb(21, 30, 44);
+    --btn-active-color: rgb(250, 244, 152);
+
+    --game_overlay-background-color: rgba(0, 0, 0, 0.8);
+
+    --a-basic-link-visited-color: rgb(117, 227, 255);
+
+    --a-basic-hover-color: rgb(255, 255, 255);
+
+    --a-basic-active-color: rgb(255, 255, 255);
+
+    --mobile_panel-background-color: rgba(0, 0, 0, 0.39);
+
+    --mobile_btn-background-color: rgb(27, 39, 57);
+    --mobile_btn-color: white;
+    --mobile_btn-border-color: rgb(0, 0, 0);
+
+    --mobile_btn-active-btn2-background-color: white;
+    --mobile_btn-active-btn2-color: black;
+    --mobile_btn-active-btn2-border-color: rgb(0, 0, 0);
+
+    --img_option-border-color: black;
+    --img_option-background-color: rgba(255, 255, 255, 0.1);
+
+    --img_option_selected-background-color: rgba(100, 100, 255, 0.5);
+
+    --img_option-hover-background-color: rgba(200, 255, 200, 0.5);
+    --img_option-hover-color: rgb(0, 0, 0);
+
+    --img_option-active-background-color: rgba(0, 0, 0, 0.1);
+    --img_option-active-color: rgb(255, 255, 255);
+
+    --img_option-div-imgdiv-background-color: rgba(0, 0, 0, 0.5) !important; /*!important is eric's not mine*/
+
+    --list_group-background-color: rgba(103, 132, 185, 0.42);
+    --list_group-border-bottom-color: rgb(36, 50, 68);
+
+    --list_mod-background-color: rgb(101, 132, 52);
+
+    --list_group-hover-background-color: rgba(146, 185, 255, 0.42);
+
+    --list_group-active-background-color: rgba(28, 36, 49, 0.42);
+
+    --image_list_collapsable-background-color: rgba(143, 167, 210, 0.22);
+
+    --image_context-background-color: rgb(255, 255, 255);
+    --image_context-border-color: rgb(140, 140, 140);
+
+    --image_context-div-color: rgb(0, 0, 0);
+
+    --image_context-div-hover-color: rgb(0, 0, 0);
+    --image_context-div-hover-background-color: rgb(221, 221, 221);
+
+    --image_context-div-active-color: rgb(221, 221, 221);
+    --image_context-div-active-background-color: rgb(51, 51, 51);
+
+    --user_link-link-visited-color: rgb(255, 204, 0);
+
+    --user_link-hover-color: rgb(255, 227, 117);
+
+    --user_link-active-color: rgb(255, 255, 255);
+
+    --search_bar-background-color: rgb(17, 17, 17);
+
+    --search_bar-input-background-color: rgb(51, 51, 51);
+    --search_bar-input-color: white;
+
+    --search_bar-input-text-background-color: rgb(34, 34, 34);
+
+    --search_bar-input-button-hover-background-color: rgb(51, 51, 102);
+
+    --search_bar-input-button-active-background-color: rgb(17, 17, 17);
+
+    --lin2b-color: rgb(188, 190, 195);
+    --lin2b-background-color: rgb(44, 52, 68);
+    --lin2b-border-color: rgb(66, 79, 104);
+
+    --lin2b-hover-color: rgb(255, 255, 255);
+    --lin2b-hover-background-color: rgb(55, 67, 92);
+    --lin2b-hover-border-color: rgb(89, 110, 149);
+
+    --lin2b-focus-active-border-color: rgb(95, 137, 227);
+    --lin2b-focus-active-background-color: rgb(34, 54, 102);
+    --lin2b-focus-active-color: rgb(255, 255, 255);
+}
+
+.dark-theme, .purple-theme, .green-theme {
+    --body-td-th-color: rgb(200, 200, 200);
+
+    --objbox-background-color: rgb(20, 20, 20);
+
+    --selline1-background-color: rgb(37, 37, 37);
+
+    --blnk-0-background-color: rgb(102, 102, 102);
+    --blnk-100-background-color: rgb(66, 66, 66);
+
+    --selline0bl-background-color: rgb(66, 66, 66);
+
+    --topui-background-color: rgb(42, 42, 42);
+    --topui-background-image: url(htile_dark.gif);
+
+    --leftui-background-color: rgb(26, 26, 26);
+    --leftui-border-right-color: rgb(16, 16, 16);
+    --leftui-background-image: url(vti_dark.gif);
+
+    --rightui-background-color: rgb(26, 26, 26);
+    --rightui-border-left-color: rgb(16, 16, 16);
+    --rightui-background-image: url(vti_dark.gif);
+
+    --field_dis_left-background-color: rgb(48, 48, 48);
+    --field_dis_left-color: rgb(87, 87, 87);
+
+    --field_dis_right-background-color: rgb(57, 57, 57);
+    --field_dis_right-color: rgb(139, 139, 139);
+
+    --field_btn-background-color: rgb(26, 26, 26);
+    --field_btn-color: rgb(139, 139, 139);
+
+    --field_btn-hover-background-color: rgb(20, 20, 20);
+    --field_btn-hover-color: rgb(179, 179, 179);
+
+    --field_btn-active-background-color: rgb(8, 8, 8);
+    --field_btn-active-color: rgb(155, 155, 155);
+
+    --tool_btn-border-color: rgb(20, 20, 20);
+    --tool_btn-background-color: rgb(20, 20, 20);
+    --tool_btn-color: rgb(139, 139, 139);
+
+    --tool_btn-hover-background-color: rgb(15, 15, 15);
+    --tool_btn-hover-color: rgb(179, 179, 179);
+    --tool_btn-hover-border-color: rgb(135, 108, 54);
+
+    --tool_btn-active-background-color: rgb(10, 10, 10);
+    --tool_btn-active-color: rgb(155, 155, 155);
+    --tool_btn-active-border-color: rgb(132, 106, 53);
+
+    --tool_btn2-border-color: rgb(81, 81, 81);
+    --tool_btn2-background-color: rgb(45, 45, 45);
+    --tool_btn2-color: rgb(139, 139, 139);
+
+    --tool_btn2-hover-background-color: rgb(45, 45, 45);
+    --tool_btn2-hover-color: rgb(179, 179, 179);
+    --tool_btn2-hover-border-color: rgb(168, 134, 67);
+
+    --tool_btn2-active-background-color: rgb(45, 45, 45);
+    --tool_btn2-active-color: rgb(155, 155, 155);
+    --tool_btn2-active-border-color: rgb(168, 134, 67);
+
+    --c-color: rgba(139, 139, 139, 0.8);
+
+    --p_u1-border-bottom-color: rgb(30, 30, 30);
+
+    --p_u2-border-bottom-color: rgb(42, 42, 42);
+
+    --pa1-color: rgb(98, 98, 98);
+    --pa1-background-color: rgb(37, 37, 37);
+
+    --pa2-color: rgb(139, 139, 139);
+    --pa2-background-color: rgb(51, 51, 51);
+
+    --pa2-hover-background-color: rgb(58, 58, 58);
+
+    --pa2edit-color: rgb(200, 200, 200);
+    --pa2edit-background-color: rgb(49, 49, 49);
+    --pa2edit-border-color: rgb(0, 0, 0);
+
+    --opcode_field-color: rgb(200, 200, 200);
+    --opcode_field-background-color: rgb(0, 0, 0);
+    --opcode_field-border-color: rgb(0, 0, 0);
+
+    --gui_sel_info-color: rgb(65, 65, 65);
+
+    --parambox-background-color: rgba(0, 0, 0, 0.8);
+    --parambox-border-color: rgb(0, 0, 0);
+
+    --paramactive-link-visited-background-color: rgba(107, 107, 107, 0.4);
+    --paramactive-link-visited-color: rgb(200, 200, 200);
+
+    --paramactive-hover-background-color: rgba(107, 107, 107, 0.7);
+
+    --paramactive-active-background-color: rgba(107, 107, 107, 0.7);
+
+    --paraminbox-link-visited-background-color: rgba(75, 75, 75, 0);
+    --paraminbox-link-visited-color: rgb(200, 200, 200);
+
+    --paraminbox-hover-background-color: rgba(75, 75, 75, 0.4);
+
+    --paraminbox-active-background-color: rgba(75, 75, 75, 0.7);
+
+    --webkit-scrollbar-track-color: rgba(0, 0, 0, 0.2);
+
+    --webkit-scrollbar-thumb-color: rgb(81, 81, 81);
+
+    --scrollbar-color-thumb: rgb(48, 48, 48);
+    --scrollbar-color-track: rgb(22, 22, 22);
+
+    --notediv-background-color: rgba(0, 0, 0, 0.8);
+
+    --notediv_term_strict-background-color: rgba(17, 17, 17, 0.8);
+
+    --notediv_term_nonstrict-background-color: rgba(0, 0, 0, 0.8);
+
+    --error-color: rgb(103, 103, 103);
+    --error-text-shadow-color: rgb(38, 38, 38);
+
+    --mrdimlights-background-color: rgba(0, 0, 0, 0.8);
+
+    --mrtitle-background-color: rgb(71, 71, 71);
+
+    --closebox-background-color: rgb(98, 98, 98);
+    --closebox-color: black;
+
+    --mrbox-background-color: rgb(42, 42, 42);
+
+    --field_input-background-color: rgb(26, 26, 26);
+    --field_input-color: rgb(139, 139, 139);
+
+    --btn-background-color: rgb(26, 26, 26);
+    --btn-color: rgb(139, 139, 139);
+
+    --btn-hover-background-color: rgb(20, 20, 20);
+    --btn-hover-color: rgb(179, 179, 179);
+
+    --btn-active-background-color: rgb(8, 8, 8);
+    --btn-active-color: rgb(155, 155, 155);
+
+    --game_overlay-background-color: rgba(0, 0, 0, 0.8);
+
+    --a-basic-link-visited-color: rgb(138, 138, 138);
+
+    --a-basic-hover-color: rgb(200, 200, 200);
+
+    --a-basic-active-color: rgb(200, 200, 200);
+
+    --mobile_panel-background-color: rgba(0, 0, 0, 0.39);
+
+    --mobile_btn-background-color: rgb(12, 12, 12);
+    --mobile_btn-color: white;
+    --mobile_btn-border-color: rgb(0, 0, 0);
+
+    --mobile_btn-active-btn2-background-color: white;
+    --mobile_btn-active-btn2-color: black;
+    --mobile_btn-active-btn2-border-color: rgb(127, 102, 51);
+
+    --img_option-border-color: black;
+    --img_option-background-color: rgba(200, 200, 200, 0.1);
+
+    --img_option_selected-background-color: rgba(91, 91, 91, 0.5);
+
+    --img_option-hover-background-color: rgba(158, 158, 158, 0.5);
+    --img_option-hover-color: rgb(0, 0, 0);
+
+    --img_option-active-background-color: rgba(0, 0, 0, 0.1);
+    --img_option-active-color: rgb(200, 200, 200);
+
+    --img_option-div-imgdiv-background-color: rgba(0, 0, 0, 0.5) !important;
+
+    --list_group-background-color: rgba(81, 81, 81, 0.42);
+    --list_group-border-bottom-color: rgb(18, 18, 18);
+
+    --list_mod-background-color: rgb(45, 45, 45);
+
+    --list_group-hover-background-color: rgba(134, 134, 134, 0.42);
+
+    --list_group-active-background-color: rgba(11, 11, 11, 0.42);
+
+    --image_list_collapsable-background-color: rgba(112, 112, 112, 0.22);
+
+    --image_context-background-color: rgb(200, 200, 200);
+    --image_context-border-color: rgb(81, 81, 81);
+
+    --image_context-div-color: rgb(0, 0, 0);
+
+    --image_context-div-hover-color: rgb(0, 0, 0);
+    --image_context-div-hover-background-color: rgb(161, 161, 161);
+
+    --image_context-div-active-color: rgb(161, 161, 161);
+    --image_context-div-active-background-color: rgb(17, 17, 17);
+
+    --user_link-link-visited-color: rgb(92, 92, 92);
+
+    --user_link-hover-color: rgb(138, 138, 138);
+
+    --user_link-active-color: rgb(200, 200, 200);
+
+    --search_bar-background-color: rgb(3, 3, 3);
+
+    --search_bar-input-background-color: rgb(17, 17, 17);
+    --search_bar-input-color: white;
+
+    --search_bar-input-text-background-color: rgb(9, 9, 9);
+
+    --search_bar-input-button-hover-background-color: rgb(27, 27, 27);
+
+    --search_bar-input-button-active-background-color: rgb(3, 3, 3);
+
+    --lin2b-color: rgb(129, 129, 129);
+    --lin2b-background-color: rgb(19, 19, 19);
+    --lin2b-border-color: rgb(37, 37, 37);
+
+    --lin2b-hover-color: rgb(200, 200, 200);
+    --lin2b-hover-background-color: rgb(29, 29, 29);
+    --lin2b-hover-border-color: rgb(158, 126, 63);
+
+    --lin2b-focus-active-border-color: rgb(173, 139, 69);
+    --lin2b-focus-active-background-color: rgb(24, 24, 24);
+    --lin2b-focus-active-color: rgb(200, 200, 200);
+}
+
+.alei-dark-theme {
+    --topui-background-image: none; /*removes top ui detail*/
+    --leftui-background-image: none; /*removes left ui detail*/
+    --rightui-background-image: none; /*removes right ui detail*/
+    --topui-background-color: #0A0A0A;
+    --leftui-background-color: #0A0A0A;
+    --rightui-background-color: #0A0A0A;
+    --field_btn-background-color: #1E1E1E;
+    --tool_btn-background-color: #1E1E1E;
+    --tool_btn-border-color: transparent; /*setStyle(".tool_btn", "border", "");*/
+    --tool_btn2-background-color: #4566AB;
+    --tool_btn2-border-color: #FFFFFF20;
+    --field_btn-color: #FFFFFFD0;
+    --tool_btn-color: #FFFFFFD0;
+    --tool_btn2-color: #FFFFFFD0;
+    --gui_sel_info-color: #FFFFFFD0;
+    --c-color: #FFFFFF20;
+    --pa1-color: #808080;
+    --pa2-color: #FFFFFFD0;
+    --field_dis_left-color: #FFFFFFD0;
+    --field_dis_right-color: #FFFFFFD0;
+    --p_u1-border-bottom-color: transparent; /*setStyle(".p_u1", "border", "");*/
+    --p_u2-border-bottom-color: transparent; /*setStyle(".p_u2", "border", "");*/
+    --pa1-background-color: #101010;
+    --pa2-background-color: #1B1B1B;
+    --objbox-background-color: #131313;
+    --field_dis_left-background-color: #1E1E1E;
+    --field_dis_right-background-color: #131313;
+    --selline1-background-color: #7A1314; /*selected object/current map*/
+    --tool_btn-hover-background-color: #5f8dd3;
+    --tool_btn-hover-border-color: #FFFFFF20;
+    --tool_btn-hover-color: #FFFFFFD0;
+    --tool_btn2-hover-background-color: #5077C4;
+    --tool_btn2-hover-border-color: #FFFFFF20;
+    --tool_btn2-hover-color: #FFFFFFD0;
+    --field_btn-hover-background-color: #353535;
+    --field_btn-hover-color: #FFFFFFD0;
+    --tool_btn-active-background-color: #151515; /*object list hold fill*/
+    --tool_btn-active-border-color: #FFFFFF20; /*object list hold outline*/
+    --tool_btn-active-color: #FFFFFFD0; /*object list hold text*/
+    --tool_btn2-active-background-color: #39558C; /*toggled active button hold fill*/
+    --tool_btn2-active-border-color: #FFFFFF20; /*toggled active button hold outline*/
+    --tool_btn2-active-color: #FFFFFFD0; /*toggled active button hold text*/
+    --field_btn-active-background-color: #151515; /*field button hold fill*/
+    --field_btn-active-color: #CCC; /*field button hold text*/
+    --mrtitle-background-color: #1E1E1E; /*map list overhead*/
+    --mrbox-background-color: #0A0A0A; /*maplist border fill*/
+    --field_input-background-color: #131313; /*map id field*/
+    --field_input-color: #CCC;
+    --btn-background-color: #1E1E1E; /*map button*/
+    --btn-color: #CCC;
+    --btn-hover-background-color: #353535; /*map button hover*/
+    --btn-hover-color: #CCC;
+    --btn-active-background-color: #151515; /*map button hold*/
+    --btn-active-color: #CCC;
+    --closebox-background-color: #353535; /*decor list close button*/
+    --closebox-color: #CCC;
+    --list_group-background-color: #1E1E1E; /*decor list category*/
+    --list_group-border-bottom-color: transparent; /*setStyle(".list_group", "borderBottom", "");*/
+    --list_group-hover-background-color: #353535; /*decor list category hover*/
+    --list_group-active-background-color: #0A0A0A; /*decor list category hold*/
+    --image_list_collapsable-background-color: #0A0A0A; /*decor list background*/
+    --img_option_selected-background-color: #4566AB40; /*current decor*/
+    --rightui-border-left-color: transparent; /*setStyle(".rightui", "borderLeft", "");*/
+    --leftui-border-right-color: transparent; /*setStyle(".leftui", "borderRight", "");*/
+    --webkit-scrollbar-thumb-color: #444;
+    --scrollbar-color-thumb: #444;
+    --scrollbar-color-track: rgba(0, 0, 0, 0.2);
+    /*setStyle("#rparams, #gui_objbox, #tools_box, #parambox", "scrollbarColor", "");*/
+    /*setStyle("#rparams, #gui_objbox, #tools_box, #parambox", "scrollbarWidth", "");*/
+    /*setStyle("#tools_box", "overflow-y", "hidden");
+    setStyle("#tools_box", "overflow-y", "auto");*/
+}

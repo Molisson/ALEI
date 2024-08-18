@@ -150,7 +150,7 @@ let themes = {
     },
     4: { // ALEI Black Theme
         backgroundColor: "#222222",
-        gridColor: "#FFFFFF",
+        gridColor: "#FFFFFF50",
         selectOutlineColor: "#FFFF00",
         selectEdgeOpacityFactor: 1,
         selectTextColor: "#FF0",
@@ -839,6 +839,8 @@ function RenderFrame() {
     window.canv.style.cursor = "default";
     ctx.globalAlpha = 1;
 
+    UpdateStars();
+
     RenderBackground();
     RenderGrid();
     RenderAllObjects();
@@ -1031,7 +1033,7 @@ try {
     GM_info; // If this is running under tampermonkey.
     
     // If ALEI is not running us.
-    if(["ALE Improvements", "ALE Improvements Local"].indexOf(GM_info.script.name) == -1) {
+    if (!GM_info.script.name.includes("ALE Improvements")) {
        isNative = true;
     } else {
        isNative = false; // Or ALEI is running us.

@@ -3,18 +3,18 @@
     font-size: 14px;
     width: 150px;
     height: 20px;
-    background-color: #476082;
-    color: #bfcad9;
+    background-color: var(--settings-menu-label-background-color);
+    color: var(--settings-menu-label-color);
     border-radius: 4px;
     text-align: center;
     display: inline-block;
 }
 
 .ALEI_settingsMenuButton {
-    background-color: #26354a;
-    color: #c1c9d3;
+    background-color: var(--settings-menu-button-background-color);
+    border: 1px solid var(--settings-menu-button-border-color);
+    color: var(--settings-menu-button-color);
     border-radius: 5px;
-    border: 1px solid #26354a;
     width: 80px;
     height: 20px;
     font-size: 14px;
@@ -24,13 +24,13 @@
 }
 
 .ALEI_settingsMenuButton:hover {
-    background-color: #596a83;
-    color: #f5faff;
+    background-color: var(--settings-menu-button-hover-background-color);
+    color: var(--settings-menu-button-hover-color);
 }
 
 .ALEI_settingMenuButtonClicked {
-    background-color: #91a5c1;
-    color: #fbfbfb;
+    background-color: var(--settings-menu-button-clicked-background-color);
+    color: var(--settings-menu-button-clicked-color);
 }
 
 #alei-tooltip {
@@ -54,4 +54,5 @@
 .gui-render-info__text {
     padding: 0;
     margin: 0;
+    color: var(--gui-render-info-color)
 }
