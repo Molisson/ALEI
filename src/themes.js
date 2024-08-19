@@ -68,7 +68,7 @@ export function initTheme() {
 }
 
 export function addAleiThemeButtons() {
-    const greenThemeButton = document.querySelector('a[onmousedown="ThemeSet(THEME_GREEN);');
+    const greenThemeButton = document.querySelector('a[onmousedown="ThemeSet(THEME_GREEN);"]');
     const toolsBox = greenThemeButton.parentElement;
     const elementAtEnd = greenThemeButton.nextElementSibling;
 
