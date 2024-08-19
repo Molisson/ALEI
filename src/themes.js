@@ -104,7 +104,8 @@ function storeAleiTheme(theme) {
 
 function takeAleiThemeFromStorage() {
     try {
-        return parseInt(localStorage.getItem("ALEI_Theme"));
+        const aleiTheme = parseInt(localStorage.getItem("ALEI_Theme"));
+        return Number.isNaN(aleiTheme) ? null : aleiTheme;
     } catch (e) {
         return null;
     }
