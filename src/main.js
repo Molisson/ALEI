@@ -5273,9 +5273,6 @@ let ALE_start = (async function() {
         updateURL = GM_info.script.updateURL;
         // repository = updateURL.split( "raw/" )[0];
         checkForUpdates();
-    } else {
-        // load this map twice to parse extended triggers.
-        if(mapid !== "" && aleiSettings.extendedTriggers) LoadThisMap();
     }
     changeTopRightText();
 
@@ -5296,6 +5293,22 @@ let ALE_start = (async function() {
     );
 
     patchRender();
+
+    // load map again if map was already loaded but not successfully (in terms of alei)
+    // map load is unsuccessful if it happens before alei is initialized
+    // alei enters a bugged state if map load is unsuccessful
+    if (es.length > 0) {
+        aleiLog(DEBUG, "Map was loaded unsuccessfully. Doing it again");
+        
+        // this is most of the stuff from StartNewMap (except setting mapid and calling ResetView)
+        es = [];
+        changes_made = false;
+        need_redraw = true;
+        need_GUIParams_update = true;
+        ClearUndos();
+        
+        LoadThisMap();
+    }
 
     NewNote("ALEI: Welcome!", "#7777FF");
     NewNote(`Don't forget to join discord server! discord.gg/K5jcNEvZ85`, "#7777FF");
