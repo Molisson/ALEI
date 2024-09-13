@@ -2832,7 +2832,18 @@ function addObjBoxResize() {
 }
 
 function patch_m_down() {
-    let og_mdown = window.m_down;
+    // entity.selected fix for when object creation is undone (1/2)
+    let oldCode = m_down.toString();
+	let newCode = oldCode.replace("in newbie.pm) { ldn", `
+		in newbie.pm) {
+		lnd('es[' + newid + '].selected=false;');
+		ldn
+	`);
+    if (oldCode === newCode) { 
+		aleiLog(WARN, "m_down direct code replacement failed (selected fix)");
+	}
+    let og_mdown = eval("(" + newCode + ")");
+
     window.m_down = function(e) {
         let previousEsLength = es.length;
         og_mdown(e);
@@ -2886,19 +2897,6 @@ function ReorderTriggerProperty(result) {
 window.SelectedObjects = [];
 
 function patchEntityClass() {
-    function cleanUpSO() {
-        setTimeout(cleanUpSO, 5 * 1000);
-        // Manually trigger select change if required.
-        for(let i = 0; i < SelectedObjects.length; i++) {
-            let e = SelectedObjects[i];
-            if(!e.selected) {
-                e.selectChange(false, true);
-            }
-        }
-    }
-    // For some reason, there can be unselected objects in SelectedObjects, still, and sometimes indexes can be off bound, we have to fix it too.
-    setTimeout(cleanUpSO, 5 * 1000);
-
     let og_E = E;
     window.E = function(_class) {
         let result = new og_E(_class);
@@ -2912,21 +2910,6 @@ function patchEntityClass() {
         else if(_class == "region") result.pm.uses_timer = false;
 
         result.fixPos = function() {}; // For proper snapping.
-        result.selectChange = function(isSelected, force = false) {
-            if((isSelected && (!result.selected || force))) {
-                SelectedObjects.push(result);
-                result.selected = true;
-            } else if(!isSelected && (result.selected || force)) {
-                SelectedObjects.splice(SelectedObjects.indexOf(result), 1);
-                result.selected = false;
-            }
-        }
-
-        function ProxySet(_, key, value) {
-            if(key == "selected") result.selectChange(value);
-            else result[key] = value;
-            return true;
-        }
 
         result.Remove = () => { // Better be safe...
             NewNote(`ALEI: This absolutely should not happen, please report to ALEI developers, error: E.Remove got called when it shouldn't be`, `#FF0000`);
@@ -2934,8 +2917,18 @@ function patchEntityClass() {
         };
 
         let proxy = new Proxy(result, {
-            set: ProxySet
-        })
+            set: function(target, key, value, receiver) {
+                if (key == "selected") {
+                    const oldValue = target.selected;
+                    if ((value && !oldValue)) {
+                        SelectedObjects.push(receiver);
+                    } else if (!value && oldValue) {
+                        SelectedObjects.splice(SelectedObjects.indexOf(receiver), 1);
+                    }
+                }
+                return Reflect.set(target, key, value, receiver);
+            }
+        });
         return proxy;
     }
     aleiLog(DEBUG, "Patched entity.");
@@ -2963,6 +2956,11 @@ function PasteFromClipBoard(ClipName) {
     var from_obj = es.length;
     while (typeof(clipboard[i]) !== 'undefined') {
         var newparam = es.length;
+
+        // entity.selected fix for when object creation is undone (2/2)
+        ldn('es[' + newparam + '].selected=true;');
+        lnd('es[' + newparam + '].selected=false;');
+
         ldn('es[' + newparam + '].exists=true;');
         lnd('es[' + newparam + '].exists=false;');
         es[newparam] = new E(clipboard[i]._class);
