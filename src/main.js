@@ -2834,14 +2834,14 @@ function addObjBoxResize() {
 function patch_m_down() {
     // entity.selected fix for when object creation is undone (1/2)
     let oldCode = m_down.toString();
-	let newCode = oldCode.replace("in newbie.pm) { ldn", `
-		in newbie.pm) {
-		lnd('es[' + newid + '].selected=false;');
-		ldn
-	`);
+    let newCode = oldCode.replace("in newbie.pm) { ldn", `
+        in newbie.pm) {
+        lnd('es[' + newid + '].selected=false;');
+        ldn
+    `);
     if (oldCode === newCode) { 
-		aleiLog(WARN, "m_down direct code replacement failed (selected fix)");
-	}
+        aleiLog(WARN, "m_down direct code replacement failed (selected fix)");
+    }
     let og_mdown = eval("(" + newCode + ")");
 
     window.m_down = function(e) {
