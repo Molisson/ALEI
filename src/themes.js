@@ -1,3 +1,6 @@
+import { aleiLog, logLevel } from "./log.js";
+import { readStorage, writeStorage } from "./storage/storageutils.js";
+
 const themes = {
     0: "blue-theme",
     1: "dark-theme",
@@ -6,7 +9,7 @@ const themes = {
     4: "alei-dark-theme",
 }
 
-const themeNames = {
+export const themeNames = {
     0: "Blue",
     1: "Dark",
     2: "Purple",
@@ -14,7 +17,7 @@ const themeNames = {
     4: "Black",
 };
 
-const aleiThemesCount = 1;
+export const aleiThemesCount = 1;
 
 export function replaceThemeSet() {
     function AleiThemeSet(value) {
@@ -22,7 +25,7 @@ export function replaceThemeSet() {
         const newTheme = themes[value];
         document.body.classList.remove(oldTheme);
         document.body.classList.add(newTheme);
-        //console.log("changed theme: " + oldTheme + " -> " + newTheme);
+        //aleiLog(logLevel.DEBUG, "Changed theme: " + oldTheme + " -> " + newTheme);
         
         THEME = value;
         need_redraw = true;
@@ -47,7 +50,7 @@ export function patchSaveBrowserSettings() {
         "localStorage.setItem($1, THEME); if (THEME > 3) { localStorage.setItem($1, 0 ); }"
     );
     if (originalCode === newCode) {
-        console.warn("SaveBrowserSettings direct code replacement failed");
+        aleiLog(logLevel.WARN, "SaveBrowserSettings direct code replacement failed (themes)");
     }
     else {
         unsafeWindow.SaveBrowserSettings = eval(`(${newCode})`);
@@ -67,46 +70,10 @@ export function initTheme() {
     ThemeSet(THEME);
 }
 
-export function addAleiThemeButtons() {
-    const greenThemeButton = document.querySelector('a[onmousedown="ThemeSet(THEME_GREEN);"]');
-    const toolsBox = greenThemeButton.parentElement;
-    const elementAtEnd = greenThemeButton.nextElementSibling;
-
-    let buttonsAdded = 0;
-
-    for (let themeNum = 4; themeNum < 4 + aleiThemesCount; themeNum++) {
-        if (buttonsAdded % 2 == 0) {
-            const sep = document.createElement("br");
-            toolsBox.insertBefore(sep, elementAtEnd);
-        }
-
-        const newButton = document.createElement("a");
-        if (themeNum != THEME) {
-            newButton.className = "tool_btn tool_wid";
-        }
-        else {
-            newButton.className = "tool_btn2 tool_wid";
-        }
-        newButton.setAttribute("onmousedown", `ThemeSet(${themeNum});`);
-        newButton.style.width = "32px";
-        newButton.textContent = themeNames[themeNum];
-        toolsBox.insertBefore(newButton, elementAtEnd);
-
-        buttonsAdded++;
-    }
-}
-
 function storeAleiTheme(theme) {
-    try {
-        localStorage.setItem("ALEI_Theme", theme);
-    } catch (e) {}
+    writeStorage("ALEI_Theme", theme);
 }
 
 function takeAleiThemeFromStorage() {
-    try {
-        const aleiTheme = parseInt(localStorage.getItem("ALEI_Theme"));
-        return Number.isNaN(aleiTheme) ? null : aleiTheme;
-    } catch (e) {
-        return null;
-    }
+    return readStorage("ALEI_Theme", null, parseInt);
 }

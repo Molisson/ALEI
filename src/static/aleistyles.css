@@ -1,5 +1,20 @@
-/*todo: rename these first ones to follow BEM naming methodology*/
-.ALEI_settingMenuText {
+.settings-text {
+    font-size: 12px;
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+.settings-item {
+    display: flex; /*this makes sure that settings labels and buttons don't get extra gap between them from html whitespace due to being inline elements*/
+    margin-bottom: 1px;
+    gap: 4px;
+}
+
+.settings-item--requires-refresh .settings-label {
+    color: #FFFF00;
+}
+
+.settings-label {
     font-size: 14px;
     width: 160px;
     height: 20px;
@@ -10,7 +25,7 @@
     display: inline-block;
 }
 
-.ALEI_settingsMenuButton {
+.settings-button {
     background-color: var(--settings-menu-button-background-color);
     border: 1px solid var(--settings-menu-button-border-color);
     color: var(--settings-menu-button-color);
@@ -20,15 +35,21 @@
     font-size: 14px;
     text-align: center;
     display: inline-block;
-    margin-right: 4px;
+    padding: 0;
+    white-space: nowrap; /*stop text from wrapping to next line if there isn't enough space*/
 }
 
-.ALEI_settingsMenuButton:hover {
+.settings-button:hover {
     background-color: var(--settings-menu-button-hover-background-color);
     color: var(--settings-menu-button-hover-color);
 }
 
-.ALEI_settingMenuButtonClicked {
+.settings-button--width-auto {
+    width: auto;
+    padding: 0 6px;
+}
+
+.settings-button--toggled {
     background-color: var(--settings-menu-button-clicked-background-color);
     color: var(--settings-menu-button-clicked-color);
 }
@@ -55,4 +76,14 @@
     padding: 0;
     margin: 0;
     color: var(--gui-render-info-color)
+}
+
+.two-element-grid {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: 50% 50%;
+}
+
+.vertical-gap {
+    height: 20px;
 }

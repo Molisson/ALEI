@@ -1,13 +1,22 @@
 import { fixWebpackStyleSheets } from "./loadcss.js";
-import { replaceThemeSet, patchSaveBrowserSettings, initTheme, addAleiThemeButtons } from "./themes.js";
+import { replaceThemeSet, patchSaveBrowserSettings, initTheme } from "./themes.js";
 import { parse as alescriptParse } from "./alescript.js";
-import { ALEI_Renderer_OnDocumentLoad as Renderer_initialize } from "./renderer.user.js"
+import { Renderer_initialize } from "./renderer.user.js"
 import { getALEIMapDataFromALEIMapDataObject, loadALEIMapDataIntoUse } from "./aleimapdata/aleimapdata.js";
 import * as aleimapdatapatches from "./aleimapdata/aleimapdatapatches.js";
 import { getCommentPositions } from "./comments/commentdata.js";
 import { makeCommentBox, setCurrentCommentedTrigger, setCommentsResizeObserverTarget, setupCommentBoxAfterAddedToDOM } from "./comments/commenttextarea.js";
 import { rparamsWasUpdated } from "./paramsidebuttons/paramsidebuttons.js";
 import { registerCommentAdderButton, registerCommentRemoverButton } from "./comments/commentbuttons.js";
+import { loadOCM, ocmHandleObjectsCreation, ocmHandleObjectUIDChange, ocmHandleObjectParametersChange } from "./ocm/ocm.js";
+import { ocmParamsToCheckPerClass } from "./ocm/ocmconnectionutils.js";
+import * as ocmpatches from "./ocm/ocmpatches.js";
+import { updateUIDReferences, replaceParamValueUID } from "./rematchuid/rematchuid.js";
+import { aleiLog, logLevel, ANSI_RESET, ANSI_YELLOW } from "./log.js";
+import { readStorage, writeStorage } from "./storage/storageutils.js";
+import { aleiSettings } from "./storage/settings.js";
+import { createALEISettingsMenu, showSettings } from "./storage/settingsmenu.js";
+import { patchUpdateTools } from "./toolbar.js";
 
 "use strict";
 
@@ -27,7 +36,6 @@ try {
 if(!isNative && (window["nativeALEIRunning"] == true)) {
     Hello_IgnoreThisError_ItIsIntentional // hope this is not defined
 }
-window["ALEI_Active"] = true;
 
 // Shorthand things
 function $id(id) {
@@ -44,81 +52,11 @@ let displayOperationCompleteNotes = true;
 let REGION_EXECUTE_PARAM_ID; // Will be set later.
 let ExtendedTriggersLoaded = false;
 
-const INFO = 0;
-const DEBUG = 1;
-const DEBUG2 = 2;
-const VERBOSE = DEBUG2; // Alias.
-const WARN = -1;
-const SWARN = -2;
-
 const TEXT_OVERHEAD         = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAAYCAYAAAAxkDmIAAAAAXNSR0IArs4c6QAABHNJREFUaEPtmVvoZWMYxn+PMznEBSGlxAVuJKUcQyTHUCahEZNG43wYx8HIMIjJjPk3MimD0EyMQ0oRrpxKkblwKBdDcoFBktNrPbt3a82atfde/zV/snfru137W+v93ud5n/d5vy26NdEZ0ESfrjscHcATToIO4A7gCc/AhB+vtoIj4gLgEeA9SScMy0FEHAc8AWyQdNB08xURnwC7ABcCezf97qjvRMROwFvAvsA8SU9X90TEAcCLwP7Ao5Lm1r23+J33ngNMSbpy1LfbPC/nQdIbo95RydvSfg6reycWYCcoIh4ArgBWSzqvBuCbgNuAbYHPgNOL331a/l1EHA48A2wHXCTp1VHJb/O8A7hF1iLiZOBx4CfglBrw3i7AP7h49j5wFHCXpHsqAJsEC4rnr0s6tUUYjbaMDcARcQZwJ2C53qpyuj+BLzKRT2aVDZToiDgQuA84Btix8q5I4F4C5koyiJusiHgZOB5YWAYvIk4DHgM+LyT6KWAx8G61JRUtyCQ4BJgPvNk0HuDMbDd/pUJYAfpraB4ssxFxTXG+a4E9i3xWlXZDcZ4tgB+ztbWW6I+KD6wYQcFdAbP8O+BiwP1qB+AWSSsr1eDndwO/AbPzIMMAdn88EVhl0kha339fSuf9gCV0haR5AwC+LMH7sPje0aX9U5ZcYEnG5H69V1mGI8KyvqyI9cskmYnQKB6TJQHeOlVkvkmY3sDgXQ18ayJIWlfpqbvn3l+A6yW5RfRWkt45NEG/2VyAbVSarnXAswV4NwMvSJo1IOEO1uxeJGnhIJOVpHkO+KNOXvOw/SpcL+nQAd/bxGyVzJWrapakdyLiXuAqg9E3W2muzi4MzEPAGqBxPEkcG9WPJR1RjS2V5VjgRknLKnk4C5gDLJV0Xc1em8NXCuJuv7kAT8tFZxIsZduMYIUreLGkBUMAXjTKnTd18AmeK2aNzVZE3FDEd0cSsWe+SmbqV5stYLc0V35sslqVhk4L5XgKU2bCDJxEImI2YEVZK2ltJQ+OyZNML0cDiFtWvtYS3RbgVYWcXtKk9P8jgPtO+HerAfBgSq5lc3lJ/tyve1UFuPLtsK1GJsXIcXA6ANdUZRmw/y3ATST69uwfKyVN/dsSXQLP3sCtwYCeD3xtkMvmLCL6/dr9eOd02L0ZOiIOaynRI4skFaQM8LnpDx5uKNG+q7DCLK9OCjM6BwPuFx5LvOpM1knuKyl/cyQ9P+yiIyJssjzqrE6zUTZZdtg2QB5vBpqsEsB9w2RXa0e+RJIr9Z9VuhzxxceWwAcVY9Y4npLJagPwfunWf25ostyL7Sdeq04TMwqwb7LS3l8O7JNJ2iiHwPd5I3RrDXM3uslKx2iDc2QytPquHwCPSa6y2jGpAqBHHhPiK5uTuhujvBzxbZXNXXW0MqkaxVMak6YNcE4X9giXFrnaY8bHpCa9s/vNeGSg+zdpPHBqHWUHcOvUjcfGDuDxwKl1lB3ArVM3Hhs7gMcDp9ZRdgC3Tt14bOwAHg+cWkf5N7oPsDdbjPHbAAAAAElFTkSuQmCC";
 const TEXT_SCORE            = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHwAAAAYCAYAAAA4e5nyAAAAAXNSR0IArs4c6QAAA0hJREFUaEPtmbuvTUEUxn/TiAbREUElEXqJQiIoNKIRhYQGlUY0HoVCpxGNaFC4EYmKRhQehUShFaKg9AeIimac2Zk5WXfOmsfeZ3Ozc+d29+6ZWbO+bz2+NdfQftYVAmZdeducpRG+zoKgEd4IB2vtWeAe8MwYc0FiYq19DRwALhljVkp4ibM2ibUPlXMfAOfFml+1Nkp30L5ba28BV4H3xphj8RrxfSW+6xB7YY/H76g44wdwzhjztnSutfYI8Bj4aYzZH/ESOPuo+RPWqhk+JuHRpQLIWRD7BlUJqAThWYCstS4A3ZrbxpibQ2yU9lhrPwNbGuE9q0gJ2AThyWxx6xvhHjUt+5Sy/UfLjNoyWZPhPjv2CTK/xGWuFAgyw4AzvqW8cSUx4afLyKxN6SNwUKzvzo0qXjbDFVw/ALvXtKRrvdCDdSgmfSzCPVE7Q48Xvc3hWdUPfRY7PbLX7QFuzPq5661d4MTlttam8NFpkOeh/1trn860z0upe3IlXevXIsgXglsEx1I9XAotGZydoAKc4FgQESlxMQbhqTNqz44yzPXp096Xa8BGYDNwBXC/48lXtYdmU/ztW6niFAhf0BC5s8ciPKvSPXg5Nd9lT1CgtaTkSrrvrR1JUbZUqVRFRF4GHgEngHfASeAJcAr46sv7PDBKNmt99BUmWdI9BjF+OZUevnV3TrWzpVT6DJg9frTZkDCwauSoBaNAuDoWiqqSdVgZZe4AL4DjwHWf2d+Bw2EsTd1Hs1nrYwXhC8FQGMsC4a9yY+SyhLt7qxmeUMZLj2UjZ3ioCp+AbbMWddH38q2zrN8F3HcjWR+bIxI+1xeiQmYni5JI7VpUYUYtlfTQw6uyKjffp3pr/Lgzcg8PAO4QYi2Ub3elu57wIT28+GCjle2AgzYW9tEH/6SkOzJSL1beme1SuORKktJb3SuYClqtYq6JeKF8u9c/4c9vqRNqbfbM8OTjzlqp9Kqn1cTzqToXC0BC31+YT8XIFJ4gF+b6MeZwYWc+QuZGvBqbfQgXfTzM9quek//bHF6TGW3NNBFo/y2bJm+Db90IHwzdNDc2wqfJ2+BbN8IHQzfNjY3wafI2+NaN8MHQTXNjI3yavA2+9V/XCzNGz/W2wgAAAABJRU5ErkJggg==";
 const TEXT_CHAT             = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAG4AAAAYCAYAAAAbIMgnAAAAAXNSR0IArs4c6QAAAwZJREFUaEPtma+OFEEQxn9tQKFwoDHwBKAIkPACCAwYcCgUYBAYcgpBCIYz8BKQcARCwhuAxIHDgALTXE26J7W11bM9dzObm0uvup0/W9Xf1/XVV32B9lkkAmGRWbekacQtdBNslbgY4xPgAXAC+BZCuBBjfA9cTfjthhDuLhTLPu0Y41fgPPAP2AkhPPbWpJ77A9wLIbypXbtLXIzxCvAaOGuDm3ujAs5NnAJC1t9vghjjK+BOAuUHcDuE8OEwaxkC+KDEAZKbi7uNd9yI0wTthRCuyYJNVfebLcZ4C3gBnEqgdYTW7vrSc424kQh6FZ2Iy9IlX3v5Ms/3RI8Mu/b4QYkTqax9d9KKMzs4L6jrZQnA6h5X+K1e5go9Q0t892yS+1xV+bWOJCOhWlp1JeZ3VmIbgF8CN1KsXeCi1+OMlOslaBWo6o+TEad2ryS0A3xUep1BvFxjTkwldIAquRvsq7bhA+dSzL/A7wRuNkZrINXGHiDBJc4zIhuuDRqbGuKGlKMD0TRVXWG658iCflYSlwEt9aM+hk3OVlG6L8ZENs9n4Gb6+xHwNBGpDUtV7CFJs/dSDtlN697rxVq75hFQQ9wK854TU7tabL5OTEvjHvBlE3HAJ88wmLhFybR9Ky1axg0dX6rvGXA/GZNcga5Z8WIDz0uW3yHukjfy1FbhtogrVeiUxBXl0oD8fb+qTqrekzeFXHsHXE8zZZbjGuKyyjycibg81w62hFkrzpGxjebksBVnXKQsXkjq+q4MwmqX/9qvmtPGZdYQl/v1XBW3VeL04FgrY8WTk4KEaFCLPc6Z2+SS7pX6pEbuldziYH8d2ePOqAMA7V6r+tlsUpnmj9Lwmy362xHmRFfmKFfpjB1yqWSYVu457xZjjyTOc9hyKpXHFM/kSTrFI8BJpDKfsZn+YjdKtatMAG6cpUrN1JkBtWGyv7sGTs0MOYa4JNE2rpCVx5NpiBvy/+3e0UBgq/8dOBpLPh5ZNOIWymMjrhG3UAQWmnaruEbcQhFYaNqt4hZK3H+hgmxGYcqn0gAAAABJRU5ErkJggg==";
 
-// Just for styling.
-const ANSI_RESET = "\x1B[0m"
-const ANSI_RED = "\x1B[31m"
-const ANSI_GREY = "\x1B[37m"
-const ANSI_YELLOW = "\x1B[93m"
-const ANSI_GREEN = "\x1B[92m"
-const ANSI_CYAN = "\x1B[96m"
-
-function readStorage(key, defaultValue, func) {
-    let val = localStorage[key];
-    if (val === undefined) return defaultValue;
-    return func(localStorage[key])
-}
-
-if (localStorage['RIGHT_PANEL_WIDTH'] != undefined) {
-    localStorage["ALEI_RightPanelWidth"] = localStorage["RIGHT_PANEL_WIDTH"];
-    localStorage.removeItem("RIGHT_PANEL_WIDTH");
-}
-
-let aleiSettings = {
-    rightPanelSize:     readStorage("ALEI_RightPanelWidth",         "30vw",  (val) => val         ),
-    triggerEditTextSize:readStorage("ALEI_EditTextSize",            "12px",  (val) => val + "px"  ),
-    starsImage:         readStorage("ALEI_StarImage",               "stars2.jpg", (val) => val    ),
-    logLevel:           readStorage("ALEI_LogLevel",                0,     parseInt               ),
-    showTriggerIDs:     readStorage("ALEI_ShowTriggerIDs",          false, (val) => val === "true"),
-    enableTooltips:     readStorage("ALEI_ShowTooltips",            false, (val) => val === "true"),
-    showSameParameters: readStorage("ALEI_ShowSameParameters",      true , (val) => val === "true"),
-    rematchUID:         readStorage("ALEI_RemapUID",                false, (val) => val === "true"),
-    //showIDs:            readStorage("ALEI_ShowIDs",               false, (val) => val === "true"),
-    //blackTheme:         readStorage("ALEI_BlackTheme",              false, (val) => val === "true"),
-    gridBasedOnSnapping:readStorage("ALEI_gridBasedOnSnapping",     true,  (val) => val === "true"),
-    //showZIndex:         readStorage("ALEI_ShowZIndex",              false, (val) => val === "true"),
-    renderObjectNames:  readStorage("ALEI_RenderObjectNames",       true,  (val) => val === "true"),
-    //ocmEnabled:         readStorage("ALEI_OCMEnabled",              false, (val) => val === "true"),
-    ocmEnabled:         true,
-    extendedTriggers:   readStorage("ALEI_ExtendedTriggersEnabled", true,  (val) => val === "true"),
-    customRenderer:     readStorage("ALEI_Renderer_Enabled",        true,  (val) => val === "true"),
-    orderedNaming:      readStorage("ALEI_orderedNaming",           true,  (val) => val === "true")
-}
-window.aleiSettings = aleiSettings;
-
-function writeStorage(key, value) {
-    try {
-        localStorage[key] = value;
-    } catch (e) {
-        NewNote("ALEI: There was some issue trying to save into storage. You might need to clear your datas.", note_bad);
-        console.error(e);
-    }
-}
-
-let levelToNameMap = {
-    0: `${ANSI_CYAN}INFO${ANSI_RESET}`,
-    1: `${ANSI_GREEN}DEBUG${ANSI_RESET}`,
-    2: `${ANSI_GREEN}VERBOSE${ANSI_RESET}`
-}
-
-function aleiLog(level, text) {
-    if (level <= WARN) {
-        console.warn(`[ALEI:WARNING]: ${text}`);
-        if(level === WARN) NewNote(`ALEI: Please check console.`, "#FFFF00");
-    }else if (level <= aleiSettings.logLevel)
-        console.log(`[${ANSI_GREEN}ALEI:${levelToNameMap[level]}]: ${text}`)
-}
-aleiLog(INFO, "Starting up...");
+aleiLog(logLevel.INFO, "Starting up...");
 
 // Original functions, globally saved here if needed
 // JS_ prefix for JavaScript ones, ALE_ for ALE ones
@@ -553,7 +491,7 @@ async function fetchSkinsFrom(startingID) {
     }
     if(skinsAdded.length > 0) {
         NewNote(`ALEI: There are ${skinsAdded.length} unregistered skins, please inform ALEI developer(s) about this. Check logs for more information`, `#00FFFF`);
-        aleiLog(INFO, `Unregistered skins: ${skinsAdded}`);
+        aleiLog(logLevel.INFO, `Unregistered skins: ${skinsAdded}`);
     }
 }
 
@@ -570,7 +508,7 @@ function optimize() {
         // If cache doesn't have the class we are looking for, we will just set default value.
         if (ogImageLists[for_class] == undefined) {
             ogImageLists[for_class] = "[ALEI] Loading...";
-            aleiLog(INFO, `Will cache response of ${for_class}`);
+            aleiLog(logLevel.INFO, `Will cache response of ${for_class}`);
         }
 
         // Overwrite setTimeout temporarily, as BrowseImages calls setTimeout for ServerRequest which sets the innerHTML of image_list
@@ -845,7 +783,7 @@ function addClipboardSync() {
             let clip_data  = data.clip_data;
 
             if (recipient == undefined || recipient == aleiSessionID) {
-                aleiLog(DEBUG, '/ale_clipboard/ got data for ' + clip_name);
+                aleiLog(logLevel.DEBUG, '/ale_clipboard/ got data for ' + clip_name);
                 sessionStorage[clip_name] = clip_data;
             }
         }
@@ -853,7 +791,7 @@ function addClipboardSync() {
             if (aleiSessionID > Math.min(...aleiSessionList)) return;
 
             let session_id = data.session_id;
-            aleiLog(DEBUG, '/ale_clipboard/ syncing to ' + session_id);
+            aleiLog(logLevel.DEBUG, '/ale_clipboard/ syncing to ' + session_id);
             for (let i = 0; i <= 10; i++) {
                 let clip_name = "clipboard" + (i == 0 ? "" : ("_slot" + (i-1)));
                 let clip_data = sessionStorage[clip_name];
@@ -864,7 +802,7 @@ function addClipboardSync() {
     }
 
     // Initial Sync
-    aleiLog(DEBUG, '/ale_clipboard/ requesting');
+    aleiLog(logLevel.DEBUG, '/ale_clipboard/ requesting');
     clipboard_channel.postMessage({kind: "get", session_id: aleiSessionID});
 
     /////////////
@@ -892,26 +830,26 @@ async function addSessionSync() {
         if (kind == "start") {
             if (aleiSessionID == null) return;
             session_channel.postMessage({kind: "greet", id: aleiSessionID});
-            aleiLog(DEBUG, "/ale_session/ recieved start");
+            aleiLog(logLevel.DEBUG, "/ale_session/ recieved start");
         }
         // An ALEI instance responded to new ALEI instance, registering the ALEI instance
         if (kind == "greet") {
             let session_id = data.id;
             if (!aleiSessionList.includes(session_id))
                 aleiSessionList.push(session_id);
-            aleiLog(DEBUG, "/ale_session/ received greet by " + session_id);
+            aleiLog(logLevel.DEBUG, "/ale_session/ received greet by " + session_id);
         }
         // An ALEI instance is closing
         if (kind == "close") {
             let session_id = data.id;
             aleiSessionList.splice(aleiSessionList.indexOf(session_id), 1);
-            aleiLog(DEBUG, "/ale_session/ received close by " + session_id);
+            aleiLog(logLevel.DEBUG, "/ale_session/ received close by " + session_id);
         }
     }
 
     // Probe for other sessions
     session_channel.postMessage({kind: "start"});
-    aleiLog(DEBUG, "/ale_session/ probing");
+    aleiLog(logLevel.DEBUG, "/ale_session/ probing");
     await new Promise(resolve => {
         JS_setTimeout(resolve, PROBE_TIMEOUT_MS);
     });
@@ -922,7 +860,7 @@ async function addSessionSync() {
     else
         aleiSessionID = Math.max(...aleiSessionList) + 1;
 
-    aleiLog(DEBUG, "/ale_session/ session ID " + aleiSessionID);
+    aleiLog(logLevel.DEBUG, "/ale_session/ session ID " + aleiSessionID);
 
     // Tell other sessions that this one is done
     window.addEventListener('beforeunload', (event) => {
@@ -999,170 +937,6 @@ function patchShowHideButton() {
     ShowHideObjectBox(); // Hacky way to fix bug
 }
 
-window.ALEI_CustomSnapping = () => {
-    let snapping = prompt("Enter snapping:", "");
-
-    if(!snapping) return;
-    if(isNaN(Number(snapping))) {NewNote("Invalid snapping.", "#FF0000"); return};
-
-    if (snapping < 0.1) {
-        snapping = 0.1;
-        NewNote("ALEI: Snapping can't be less than 0.1", "#FF0000");
-        return;
-    }
-
-    if (snapping > 100) {
-        snapping = 100;
-        NewNote("ALEI: Snapping can't be greater than 100", "#FF0000");
-        return;
-    }
-
-    GridSnappingSet(Math.round(snapping * 10));
-}
-
-function addSnappingOptions_helper() {
-    // Remove default snapping options except for "1", we will replace it them later
-    $query(`a[onmousedown="GridSnappingSet(50);"]`).remove();
-    $query(`a[onmousedown="GridSnappingSet(100);"]`).remove();
-
-    let newHTML = ""
-    let snappingOptions = [
-        1, 2, 5,
-        10, 20, 40,
-        50, 100, "C"
-    ];
-
-    for (let snappingIndex in snappingOptions) {
-        let snapping = snappingOptions[snappingIndex];
-
-        if ((snappingIndex % 3 == 0) && (snappingIndex != 0)) {
-            // We have to break into new row.
-            newHTML += "<br>";
-        }
-
-        let element = document.createElement("a");
-        // Set relevant attributes.
-
-        if (snapping != "C") {
-            element.innerHTML = snapping / 10;
-        } else {
-            element.innerHTML = "C";
-        }
-
-        let toolClass = "tool_btn";
-        if (GRID_SNAPPING == snapping) {
-            toolClass = "tool_btn2";
-        }
-
-        if (!snappingOptions.includes(GRID_SNAPPING) && snapping == "C") {
-            toolClass = "tool_btn2";
-        }
-
-        element.setAttribute("class", `${toolClass} tool_wid`);
-        element.setAttribute("style", "width: 21px;");
-
-        if (snapping != "C") {
-            element.setAttribute("onmousedown", `GridSnappingSet(${snapping}); Render();`);
-        } else {
-            element.setAttribute("onmousedown", "ALEI_CustomSnapping(); Render();");
-        }
-
-        newHTML += element.outerHTML;
-        // Add to main HTML.
-    }
-    // Replace original `1` snapping with new HTML.
-    $query(`a[onmousedown="GridSnappingSet(10);"]`).outerHTML = newHTML;
-}
-
-window.ALEI_UpdateRematchUIDSetting = function(value) {
-    aleiSettings.rematchUID = value;
-    writeStorage("ALEI_RemapUID", value);
-    UpdateTools();
-}
-
-function addRematchUIOptions_helper() {
-    $query(`a[onmousedown="EvalSet('param_panel_size',800);SaveBrowserSettings();UpdateCSS();"]`).remove();
-
-    let result = document.evaluate("//span[contains(., 'Param')]", left_panel, null, XPathResult.ANY_TYPE, null);
-    result.iterateNext();
-    result.iterateNext().innerHTML = "Remap UID";
-
-    for (let value of [[true, "Yes", 0], [false, "No", 200]]) {
-        let element = document.createElement("a");
-        element.innerHTML = value[1];
-
-        let toolClass = "tool_btn";
-        if(aleiSettings.rematchUID == value[0]) toolClass = "tool_btn2";
-
-        element.setAttribute("class", `${toolClass} tool_wid`);
-        element.setAttribute("style", "width: 64px;");
-        element.setAttribute("onmousedown", `ALEI_UpdateRematchUIDSetting(${value[0]})`);
-
-        $query(`a[onmousedown="EvalSet('param_panel_size',${value[2]});SaveBrowserSettings();UpdateCSS();"]`).outerHTML = element.outerHTML;
-    }
-
-}
-
-window.ALEI_UpdateNameRenderSetting = function(status) { // TODO: we should have mixin function lol, check: <#1245454955477729382>
-    window.ENABLE_TEXT = status;
-    aleiSettings.renderObjectNames = status;
-    writeStorage("ALEI_RenderObjectNames", status);
-    UpdateTools();
-    need_redraw = 1;
-}
-
-function addPreviewNamesOptions_helper() {
-    let prevElement = $query(`a[onmousedown="ShowTexturesSet(true);"]`);
-
-    function space() {
-        let spacer = document.createElement("div");
-        spacer.setAttribute("class", "q");
-        prevElement.outerHTML += spacer.outerHTML;
-    }
-
-    let headerText = document.createElement("span");
-    headerText.setAttribute("class", "gui_sel_info");
-    headerText.innerHTML = "Object Names";
-
-    let buttonHTML = "";
-
-    function addButton(text, status) {
-        let button = document.createElement("a");
-        let _class = "tool_btn";
-
-        if(status == aleiSettings.renderObjectNames) _class = "tool_btn2";
-
-        button.setAttribute("class", `tool_wid ${_class}`);
-        button.setAttribute("style", "width: 32px");
-        button.setAttribute("onmousedown", `ALEI_UpdateNameRenderSetting(${status});`);
-        button.innerHTML = text;
-        buttonHTML += button.outerHTML;
-    }
-
-    addButton("Show", true);
-    addButton("Hide", false);
-
-    prevElement.outerHTML += `<br><div class="q"></div><br>` + headerText.outerHTML + "<br>" + buttonHTML;
-
-}
-
-function onToolUpdate() {
-    addSnappingOptions_helper();
-    addRematchUIOptions_helper();
-    addPreviewNamesOptions_helper();
-    addAleiThemeButtons();
-}
-
-function patchUpdateTools() {
-    let ut = UpdateTools;
-    window.UpdateTools = function() {
-        ut();
-        onToolUpdate();
-    }
-    UpdateTools();
-    aleiLog(DEBUG, "Patched updateTools.");
-}
-
 function tryToNumber(x) {
     if (!isNaN(Number(x))) {
         return Number(x);
@@ -1177,6 +951,8 @@ function insertXML(xml) {
     let parser = new DOMParser();
     let map = parser.parseFromString(xml, "application/xml");
     let objects = map.querySelectorAll("*");
+
+    let originalEsLength = es.length;
 
     for (let i = 1; i < objects.length; i++) {
         let object = objects[i];
@@ -1194,6 +970,9 @@ function insertXML(xml) {
 
         es.push(eo);
     }
+
+    // ocm update
+    if (aleiSettings.ocmEnabled) ocmHandleObjectsCreation(es.slice(originalEsLength));
 
     need_redraw = 1;
     need_GUIParams_update = 1;
@@ -1250,87 +1029,6 @@ function exportXML() {
     download.remove();
 }
 ///////////////////////////////
-const _ignoredKeys = [
-    // Numbers obviously cannot have texts.
-    "x",
-    "y",
-    "w",
-    "h",
-    "maxcalls",
-    "command",
-    "upg",
-    "tox",
-    "toy",
-    "stab",
-    "damage",
-    "u",
-    "v",
-    "sx",
-    "sy",
-    "r",
-    "f",
-    "power",
-    // Booleans obviously cannot have texts.
-    "enabled",
-    "flare",
-    // We are obviously not going to change UID
-    "uid",
-    // We are obviously not going to change models
-    "gun_model",
-    "model",
-];
-
-/*
- * UUIDR_Replace
- * This is function that handles replacing name part.
- * Is meant to be used in UpdateUIDReferences below.
-
- * @param  {string}  value    Value to be replaced.
- * @param  {string}  oldName  Previous name to be replaced from.
- * @param  {string}  newName  New name to be replaced to.
-*/
-function UUIDR_Replace(value, oldName, newName) {
-    if ((typeof(value) !== "string")) return value;
-    if(value.indexOf(oldName) === -1) return value;
-    if(value == oldName) return newName;
-
-    let splt = value.split(",");
-    for (let i = 0; i < splt.length; i++) {
-        let item = splt[i];
-        if (item.trim() == oldName) {
-            splt[i] = item.replace(oldName, newName);
-        }
-    }
-    return splt.join(",");
-
-}
-
-function updateUIDReferences(oldName, newName) {
-    aleiLog(DEBUG2, `Updating UID references from ${ANSI_CYAN}${oldName}${ANSI_RESET} to ${ANSI_CYAN}${newName}${ANSI_RESET}`);
-    for (let i = 0; i < es.length; i++) {
-        let element = es[i];
-        if (!element.exists) continue;
-        let properties = element.pm;
-
-        for (let entry of Object.entries(properties)) {
-            let key = entry[0];
-            let value = entry[1];
-
-            if (_ignoredKeys.indexOf(key) !== -1) continue;
-
-            if(["additionalParamA", "additionalParamB"].indexOf(key) !== -1) {
-                // This is extended action.
-                for(let i = 0; i < value.length; i++) {
-                    value[i] = UUIDR_Replace(value[i], oldName, newName);
-                }
-                continue;
-            }
-
-            properties[key] = UUIDR_Replace(value, oldName, newName);
-        }
-    }
-    window.need_GUIParams_update = true;
-}
 
 /**
  *  This function updates the actual entity class's pm property based on selection.
@@ -1347,8 +1045,6 @@ function UpdatePhysicalParam(paramname, chvalue, toShowNote = true) {
     var list_changes = '';
 
     // Finds selection.
-    let ogES = window.es;
-    window.es = SelectedObjects;
     for (var elems = 0; elems < es.length; elems++) {
         if (!es[elems].exists)                                                    continue;
         if (!es[elems].selected)                                                  continue;
@@ -1367,34 +1063,43 @@ function UpdatePhysicalParam(paramname, chvalue, toShowNote = true) {
         let lup = (typeof (paramname) == 'string') ? '"' + paramname + '"' : paramname;
         chvalue = (typeof (chvalue) == 'number' || chvalue == 0) ? chvalue : _encodeXMLChars(`${chvalue}`);
 
+        let oldValue;
+
+        // it's necessary to add the "set parameter" and "update ocm" eval strings to these before adding them to undo/redo via lnd/ldn because 
+        // we need the operations in this order: `es[${elems}].pm[${lup}] = ${oldValue}; ocmHandleObjectUIDChange(es[${elems}]);` while taking
+        // into account that the "set parameter" string varies depending on extended triggers and "update ocm" string varies depending on what 
+        // paramname is. the operations need to be in that order specifically because ocm needs to update after the parameter is set, not before
+        let undoEvalString = "";
+        let redoEvalString = "";
+
         // Not a trigger or below action10 and below. Proceed with the usual Eric's implementation.
-        if(!match || Number(match[1]) - 11 < 0){
-            lnd('es[' + elems + '].pm[' + lup + '] = ' + es[elems].pm[paramname] + ';');
-            ldn('es[' + elems + '].pm[' + lup + '] = ' + chvalue + ';');
+        if (!match || Number(match[1]) - 11 < 0){
+            oldValue = es[elems].pm[paramname];
 
-            // Rematch UID
-            if((paramname == "uid") && aleiSettings.rematchUID) {
-                let oldName = es[elems].pm[paramname]; // Note: don't do this after getting original ES, otherwise id isn't valid lmao
-                window.es = ogES;
-
-                updateUIDReferences(oldName, chvalue);
-
-                ogES = window.es;
-                window.es = SelectedObjects;
+            if (typeof chvalue == "number" || chvalue == 0) {
+                undoEvalString = `es[${elems}].pm[${lup}] = ${oldValue};`;
+                redoEvalString = `es[${elems}].pm[${lup}] = ${chvalue};`;
+                es[elems].pm[paramname] = Number(chvalue);
+            }
+            else if (typeof chvalue == "string") {
+                undoEvalString = `es[${elems}].pm[${lup}] = "${oldValue}";`;
+                redoEvalString = `es[${elems}].pm[${lup}] = "${chvalue}";`;
+                es[elems].pm[paramname] = chvalue;
+            }
+            else {
+                alert('Unknown value type: ' + typeof chvalue);
             }
 
             if(paramname == "__id") {
                 NewNote(`ALEI: Changing Object ID does not do anything, don't expect that to apply.`, "#FFFFFF");
             }
-            // Saves the value to the class.
-            es[elems].pm[paramname] = chvalue;
 
             if(paramname == "__priority") {
                 ApplyObjectProperties(es[elems]);
             }
         }
         // Handling extended trigger's >10 trigger action.
-        else{
+        else {
             let index = Number(match[1]) - 11;      // action_11_... starts at element 0.
 
             let propertyName = '';
@@ -1408,20 +1113,58 @@ function UpdatePhysicalParam(paramname, chvalue, toShowNote = true) {
                 propertyName = "additionalParamB";
             }
             else{
-                aleiLog(WARN, "Something went wrong with regex. " + match[2]);
+                aleiLog(logLevel.WARN, "Something went wrong with regex. " + match[2]);
                 return;
             }
 
-            lnd(`es["${elems}"].pm["${propertyName}"][${index}] = ${es[elems].pm[propertyName][index]};`);
-            ldn(`es["${elems}"].pm["${propertyName}"][${index}] = ${chvalue};`);
+            oldValue = es[elems].pm[propertyName][index];
 
-            es[elems].pm[propertyName][index] = chvalue;
+            if (typeof chvalue == "number" || chvalue == 0) {
+                undoEvalString = `es[${elems}].pm["${propertyName}"][${index}] = ${oldValue};`;
+                redoEvalString = `es[${elems}].pm["${propertyName}"][${index}] = ${chvalue};`;
+                es[elems].pm[propertyName][index] = Number(chvalue);
+            }
+            else if (typeof chvalue == "string") {
+                undoEvalString = `es[${elems}].pm["${propertyName}"][${index}] = "${oldValue}";`;
+                redoEvalString = `es[${elems}].pm["${propertyName}"][${index}] = "${chvalue}";`;
+                es[elems].pm[propertyName][index] = chvalue;
+            }
+            else {
+                alert('Unknown value type: ' + typeof chvalue);
+            }
+        }
 
+        // rematch uid (automatically update uid references)
+        if (aleiSettings.rematchUID && aleiSettings.ocmEnabled && paramname == "uid" && chvalue != oldValue) {
+            const undosnredos = updateUIDReferences(es[elems], oldValue, chvalue);
+            undoEvalString += undosnredos.undo;
+            redoEvalString += undosnredos.redo;
+        }
 
+        // ocm patch (1/3)
+        if (aleiSettings.ocmEnabled && chvalue != oldValue) {
+            if (paramname == "uid") {
+                ocmHandleObjectUIDChange(es[elems]);
+                undoEvalString += `ocmHandleObjectUIDChange(es[${elems}]);`;
+                redoEvalString += `ocmHandleObjectUIDChange(es[${elems}]);`;
+            }
+            else if (ocmParamsToCheckPerClass[es[elems]._class].includes(paramname)) {
+                ocmHandleObjectParametersChange(es[elems]);
+                undoEvalString += `ocmHandleObjectParametersChange(es[${elems}]);`;
+                redoEvalString += `ocmHandleObjectParametersChange(es[${elems}]);`;
+            }
+        }
+
+        if (undoEvalString !== "") {
+            // at this point the eval strings look like this: "{set parameter};{update ocm};"
+            // or just "{set parameter};" if ocm update isn't necessary
+            // can also include rematch uid stuff between "set parameter" and "update ocm" strings
+            lnd(undoEvalString);
+            ldn(redoEvalString);
         }
 
         if(paramname == "uses_timer") { // I do not have to do this, but i will for convenience
-            if([true, "true"].indexOf(es[elems].pm.uses_timer) != -1) {
+            if([true, "true"].includes(es[elems].pm.uses_timer)) {
                 param_type[REGION_EXECUTE_PARAM_ID][1] = "timer+none";
             } else {
                 param_type[REGION_EXECUTE_PARAM_ID][1] = "trigger+none";
@@ -1442,7 +1185,6 @@ function UpdatePhysicalParam(paramname, chvalue, toShowNote = true) {
         NewNote('Note: Some changes weren\'t made due to missmatch of active layer and class of selected objects', note_neutral);
     }
     lfz(false);
-    window.es = ogES;
 }
 
 let imageContextMap = {};
@@ -1710,9 +1452,9 @@ function getSelectionImage() {
     let w = maxX - minX + 20;
     let h = maxY - minY + 20;
 
-    aleiLog(DEBUG2, "Before GID");
+    aleiLog(logLevel.DEBUG2, "Before GID");
     let data = ctx.getImageData(0, 0, w, h);
-    aleiLog(DEBUG2, "After GID");
+    aleiLog(logLevel.DEBUG2, "After GID");
 
     let canvas = document.createElement("canvas");
     let ctx2 = canvas.getContext("2d");
@@ -1804,7 +1546,7 @@ function clipboardItemAction(i) {
 
 function registerClipboardItemAction() {
     window.clipboardItemAction = clipboardItemAction;
-    aleiLog(DEBUG, "Registered Clipboard Item Action");
+    aleiLog(logLevel.DEBUG, "Registered Clipboard Item Action");
 }
 
 function updateClipboardDiv() {
@@ -2490,7 +2232,7 @@ function doTooltip() {
             tooltip.style.top = "-100px";
         }
     });
-    aleiLog(DEBUG, "Added tooltip.")
+    aleiLog(logLevel.DEBUG, "Added tooltip.")
 }
 
 function patchDecorUpload() {
@@ -2680,7 +2422,7 @@ function patchANI() {
             if (aleiSettings.showSameParameters) setSameParameters();
         }
     }
-    aleiLog(DEBUG, "Patched ANI");
+    aleiLog(logLevel.DEBUG, "Patched ANI");
 }
 
 ///////////////////////////////
@@ -2719,7 +2461,7 @@ function addObjBoxResize() {
         ShowHideObjectBox();
         ShowHideObjectBox();
     });
-    aleiLog(DEBUG, "Added splitter for object box.");
+    aleiLog(logLevel.DEBUG, "Added splitter for object box.");
 }
 
 function patch_m_down() {
@@ -2730,8 +2472,8 @@ function patch_m_down() {
         lnd('es[' + newid + '].selected=false;');
         ldn
     `);
-    if (oldCode === newCode) { 
-        aleiLog(WARN, "m_down direct code replacement failed (selected fix)");
+    if (oldCode === newCode) {
+        aleiLog(logLevel.WARN, "m_down direct code replacement failed (selected fix)");
     }
     let og_mdown = eval("(" + newCode + ")");
 
@@ -2740,6 +2482,12 @@ function patch_m_down() {
         og_mdown(e);
 
         if (es.length > previousEsLength) { // New element is made.
+            // ocm patch (2/3)
+            if(aleiSettings.ocmEnabled) {
+                const newObjects = es.slice(previousEsLength);
+                ocmHandleObjectsCreation(newObjects);
+            }
+
             let element = es[es.length - 1];
             if (!("x" in element.pm)) return;
             // We now have to do job of fixPos, we cannot set fixPos to have it argument-based directly because of scoping
@@ -2810,7 +2558,7 @@ function patchEntityClass() {
         });
         return proxy;
     }
-    aleiLog(DEBUG, "Patched entity.");
+    aleiLog(logLevel.DEBUG, "Patched entity.");
 }
 
 function PasteFromClipBoard(ClipName) {
@@ -2820,18 +2568,19 @@ function PasteFromClipBoard(ClipName) {
     }
     clipboard = unserialize(sessionStorage[ClipName]);
     lcz();
-    for (var i = 0; i < es.length; i++)
+    for (let i = 0; i < es.length; i++)
         if (es[i].exists) {
             if (es[i].selected) {
                 ldn('es[' + i + '].selected=false;');
                 lnd('es[' + i + '].selected=true;');
                 es[i].selected = false;
             }
-        } var min_x = 0;
+        }
+    var min_x = 0;
     var max_x = 0;
     var min_y = 0;
     var max_y = 0;
-    i = 0;
+    let i = 0;
     var from_obj = es.length;
     while (typeof(clipboard[i]) !== 'undefined') {
         var newparam = es.length;
@@ -2871,7 +2620,8 @@ function PasteFromClipBoard(ClipName) {
                             max_y = Math.max(max_y, es[newparam].pm.y + es[newparam].pm.h);
                         }
                 }
-            } i++;
+            }
+        i++;
     }
     ldn('m_drag_selected=true;');
     ldn('paint_draw_mode=true;');
@@ -2897,16 +2647,17 @@ function PasteFromClipBoard(ClipName) {
     var lo_x = Math.round((x1 - (min_x + max_x) / 2) / GRID_SNAPPING) * GRID_SNAPPING;
     var lo_y = Math.round((y1 - (min_y + max_y) / 2) / GRID_SNAPPING) * GRID_SNAPPING;
 
-    for (var i2 = from_obj; i2 < es.length; i2++) {
+    for (let i2 = from_obj; i2 < es.length; i2++) {
         if (typeof(es[i2].pm.uid) !== 'undefined') {
             var old_uid = es[i2].pm.uid;
             es[i2].exists = true;
             es[i2].pm.uid = RandomizeName(es[i2].pm.uid);
 
 
-            for (var i3 = from_obj; i3 < es.length; i3++) {
-                for (let param in es[i3].pm) {
-                    es[i3].pm[param] = UUIDR_Replace(es[i3].pm[param], old_uid, es[i2].pm.uid);
+            for (let i3 = from_obj; i3 < es.length; i3++) {
+                // update uid references to the new uid in the params that are relevant to uid references
+                for (let param of ocmParamsToCheckPerClass[es[i3]._class]) {
+                    es[i3].pm[param] = replaceParamValueUID(es[i3].pm[param], old_uid, es[i2].pm.uid);
                 }
             }
         }
@@ -2921,10 +2672,18 @@ function PasteFromClipBoard(ClipName) {
                 ldn('es[' + i2 + '].pm.y=' + es[i2].pm.y + ';');
             }
     }
+
+    // ocm patch (3/3)
+    // initialize connections after old uids have been replaced with new unique uids and uid references have been updated
+    if (aleiSettings.ocmEnabled) {
+        const newObjects = es.slice(from_obj);
+        ocmHandleObjectsCreation(newObjects);
+    }
+
     // Again by Prosu
     x1 = Math.round((m_pos_x - m_down_x) / GRID_SNAPPING) * GRID_SNAPPING;
     y1 = Math.round((m_pos_y - m_down_y) / GRID_SNAPPING) * GRID_SNAPPING;
-    for (var i = 0; i < es.length; i++) {
+    for (let i = 0; i < es.length; i++) {
         if (es[i]._isphysical && es[i].exists && es[i].selected && (MatchLayer(es[i]) || paint_draw_mode)) {
             es[i].pm.x += x1;
             es[i].pm.y += y1;
@@ -2950,7 +2709,7 @@ function decodeUnicode(string) {
 function ServerRequest_handleMapData(mapCode) {    
     // Branch of patchServerRequest
     // Made to deal with map source related things.
-    aleiLog(DEBUG, "Parsing map source now.");
+    aleiLog(logLevel.DEBUG, "Parsing map source now.");
 
     const objectKeyValueRegex = /(\w+)=((-?\d+(\.\d+)?)|("[ -~]*")|true|false)/;
     const objectCreationRegex = /q=es\[\d+\]=new E\("(\w+)"\)/;
@@ -2991,7 +2750,7 @@ function ServerRequest_handleMapData(mapCode) {
                 // There is supposed to be only 3 ;'s
                 // initializing;setting;firstProperty
                 // Assuming that server only gives first property and does not send more than 1 in creation line
-                aleiLog(WARN, `Expected 3 items, got ${splt.length} - ${splt}`);
+                aleiLog(logLevel.WARN, `Expected 3 items, got ${splt.length} - ${splt}`);
                 continue;
             }
             expression = splt[2];
@@ -3001,7 +2760,7 @@ function ServerRequest_handleMapData(mapCode) {
         let matchKeyValue = objectKeyValueRegex.exec(expression);
 
         if (matchKeyValue === null) {
-            aleiLog(WARN, `Unable to figure out what kind of code is "${expression}", you MIGHT have issues.`);
+            aleiLog(logLevel.WARN, `Unable to figure out what kind of code is "${expression}", you MIGHT have issues.`);
             continue;
         }
         let key = matchKeyValue[1];
@@ -3019,25 +2778,29 @@ function ServerRequest_handleMapData(mapCode) {
     }
 
     if(aleiSettings.extendedTriggers) parseExtendedTriggers();
-
-    getALEIMapDataFromALEIMapDataObject(); //map data object >>> aleiMapData
-    loadALEIMapDataIntoUse(); //aleiMapData >>> data in use
 }
 
 function handleServerRequestResponse(request, operation, response) {
     if (response.indexOf("var es = new Array();") != -1) {
         window.SelectedObjects = [];
         ServerRequest_handleMapData(response);
+        getALEIMapDataFromALEIMapDataObject(); //map data object >>> aleiMapData
+        loadALEIMapDataIntoUse(); //aleiMapData >>> data in use
+        if (aleiSettings.ocmEnabled) loadOCM();
     }else if (response.indexOf("knownmaps = [") !== -1) {
         window.knownmaps = [];
         for (let map of response.match(/"(.*?)"/g)) {
             knownmaps.push(map.slice(1, -1))
         }
-        aleiLog(DEBUG, `Updated knownmaps with ${knownmaps.length} maps`);
+        aleiLog(logLevel.DEBUG, `Updated knownmaps with ${knownmaps.length} maps`);
     }else {
-        aleiLog(DEBUG2, `Evaling for request ${ANSI_YELLOW}"${request}"${ANSI_RESET} with operation of ${ANSI_YELLOW}"${operation}"${ANSI_RESET}: ${response}`)
+        aleiLog(logLevel.DEBUG2, `Evaling for request ${ANSI_YELLOW}"${request}"${ANSI_RESET} with operation of ${ANSI_YELLOW}"${operation}"${ANSI_RESET}: ${response}`)
         try {JS_eval(response);}
-        catch(e) {NewNote("Eval error!", note_bad); console.error(e); aleiLog(INFO, `Eval Error from ${request}, for op ${operation} whose response is ${response}`)}
+        catch(e) {
+            NewNote("Eval error!", note_bad);
+            console.error(e);
+            aleiLog(logLevel.INFO, `Eval Error from ${request}, for op ${operation} whose response is ${response}`);
+        }
     };
 }
 
@@ -3083,7 +2846,7 @@ function updateDecorList() {
                     </div>
                     `
         }
-        aleiLog(DEBUG, "Updated decor list.");
+        aleiLog(logLevel.DEBUG, "Updated decor list.");
     }
     catch(e) {} // We assume we are not in decor list yet.
 }
@@ -3135,7 +2898,7 @@ function patchServerRequest() {
     // We are pretty much done, we have patched ServerRequest, so just roll with old eval.
     // Oh and a note for myself incase i confuse myself: vanilla ServerRequest is synchrono
     window.eval = JS_eval;
-    aleiLog(DEBUG, "Patched ServerRequest");
+    aleiLog(logLevel.DEBUG, "Patched ServerRequest");
 }
 
 window.eval = function(code) { // Temporarily overriding eval so we can patch ServerRequest as early as possible
@@ -3218,7 +2981,7 @@ function patchUpdateGUIParams() {
     // if extended triggers are enabled, the code replacement from that will cause this code replacement to fail.
     // it won't cause an error assuming that code does more or less the same thing. this thing is a bit of a nightmare
     if (!code.includes(newCodeSnippet)) { 
-        //aleiLog(WARN, "UpdateGUIParams direct code replacement failed (separators)");
+        //aleiLog(logLevel.WARN, "UpdateGUIParams direct code replacement failed (separators)");
     }
     code = "(" + code + ")"; //putting it in parentheses to make it a function expression. the function can then be assigned directly from eval
     let origUGP = eval(code);
@@ -3300,7 +3063,7 @@ function patchUpdateGUIParams() {
         GenParamValEscapeDoubleQuotes = false;
         if(sortRequired) SortObjectsByPriority();
     }
-    aleiLog(DEBUG, "Patched UpdateGUIParams");
+    aleiLog(logLevel.DEBUG, "Patched UpdateGUIParams");
 }
 
 function patchEvalSet() {
@@ -3309,258 +3072,8 @@ function patchEvalSet() {
         window[key] = value;
         UpdateTools();
     }
-    aleiLog(DEBUG, "Patched EvalSet");
+    aleiLog(logLevel.DEBUG, "Patched EvalSet");
 }
-
-window.ALEI_settingsMenu = undefined;
-
-
-/*
-TODO: Text field for those.
-let aleiSettings = {
-    triggerEditTextSize:readStorage("ALEI_EditTextSize",      "12px",  (val) => val + "px"  ),
-    starsImage:         readStorage("ALEI_StarImage",    "stars2.jpg", (val) => val         ),
-}
-*/
-
-function createALEISettingsMenu() {
-    let mainWindow = document.createElement("div");
-    mainWindow.setAttribute("class", "mrpopup");
-
-    let title = document.createElement("div");
-    title.innerHTML = "ALEI Settings";
-    title.setAttribute("id", "mrtitle"); // Eric, what is this crap ?
-    mainWindow.appendChild(title);
-
-
-    let box = document.createElement("div");
-    box.setAttribute("id", "mrbox");
-    mainWindow.appendChild(box);
-
-    // Convenience functions.
-    let usableHeight = 240;
-    let currentHeight = 300;
-
-    function addText(text, requiresRestart = false) {
-        let div = document.createElement("div");
-        div.innerHTML = text;
-        if (requiresRestart) {
-            div.style.setProperty("color", "#FFFF00");
-        }
-        div.setAttribute("class", "ALEI_settingMenuText");
-        box.innerHTML += "<br>";
-        box.innerHTML += div.outerHTML;
-
-        usableHeight -= 20;
-        if(usableHeight <= 0) {
-            currentHeight += 20;
-            usableHeight += 20;
-            box.style.height = `${currentHeight}px`;
-        }
-    }
-    function registerButton(general, values, key) {
-        aleiSettingButtonsMap[general] = [values, aleiSettings, key];
-    }
-    function newRegisterButton(general, values, dict, key) {
-        aleiSettingButtonsMap[general] = [values, dict, key];
-    }
-    function addButton(display, identifier, callback, style = "") {
-        aleiButtonClicks["setting_" + identifier] = callback;
-
-        let button = document.createElement("input");
-        button.setAttribute("type", "button");
-        button.setAttribute("id", "ALEI_" + identifier);
-        button.setAttribute("value", display);
-        button.setAttribute("onclick", `aleiButtonClicks['setting_${identifier}'](); ALEI_settingUpdateButtons(); triggerActionsPreventError();`);
-        button.setAttribute("class", "ALEI_settingsMenuButton");
-        button.setAttribute("style", style);
-
-        box.innerHTML += button.outerHTML;
-    }
-    function addBinaryOption(truthyVal, falsyVal, storage, key, internalName, callback = () => {}) {
-        function _apply(val) {
-            writeStorage(storage, val);
-            aleiSettings[key] = val;
-        }
-        addButton(truthyVal, `${internalName}_true`, () => {_apply(true); callback(true)});
-        addButton(falsyVal, `${internalName}_false`, () => {_apply(false); callback(false)});
-    }
-
-    // Log level.
-    function logApply(val) {
-        writeStorage("ALEI_LogLevel", val);
-        aleiSettings.logLevel = val;
-    }
-    box.innerHTML += "NOTE: Settings in yellow text requires page refresh to be applied.<br>";
-    addButton("Clear Backup", "clearMapBackups", () => {
-        if (!confirm("This will remove map backups from the browser data. Continue?")) return;
-        let removed = [];
-        for (let key of Object.keys(localStorage)) {
-            if(!(key.slice(0, "pb2_map".length) == "pb2_map")) continue;
-            removed.push(key);
-            localStorage.removeItem(key);
-        }
-        NewNote(`ALEI: Cleared backup, removed total ${removed.length} backups.`, "#00FFFF");
-        aleiLog(DEBUG2, `Removed backup of: ${removed}`);
-    }, "width: 100px");
-    box.innerHTML += "<br>";
-
-    let identifier = 0;
-
-    function MakeSettingButtons(storage, dict, dictKey, valueMap) {
-        identifier++;
-        newRegisterButton(
-            identifier,
-            valueMap.map(o => o[1]),
-            dict,
-            dictKey
-        );
-        function _apply(value) {
-            writeStorage(storage, value);
-            dict[dictKey] = value;
-        }
-        for(let map of valueMap) {
-            addButton(map[0], `${identifier}_${map[1]}`, () => _apply(map[1]));
-        }
-    }
-
-    window.ALEIAPI.settings = {};
-    window.ALEIAPI.settings.addText = addText;
-    window.ALEIAPI.settings.createButtons = MakeSettingButtons;
-
-    function aleiMakeSettingButtons(text, requireRefresh, storage, dictKey, valueMap) {
-        addText(text, requireRefresh);
-        MakeSettingButtons(storage, aleiSettings, dictKey, valueMap);
-    }
-
-    let PR_ShowHide = [["Show", true], ["Hide", false]];
-
-    aleiMakeSettingButtons(
-        "Log Level:",
-        false,
-        "ALEI_LogLevel", // Storage key.
-        "logLevel", // Dictionary key.
-        [
-            ["INFO", 0], // Value maps.
-            ["DEBUG", 1],
-            ["VERBOSE", 2]
-        ]
-    )
-
-    aleiMakeSettingButtons(
-        "Action IDs:",
-        true,
-        "ALEI_ShowTriggerIDs",
-        "showTriggerIDs",
-        PR_ShowHide
-    );
-
-    aleiMakeSettingButtons(
-        "Tooltips:",
-        false,
-        "ALEI_ShowTooltips",
-        "enableTooltips",
-        PR_ShowHide
-    )
-
-    // Object ID.
-    /*registerButton("showids", [true, false], "showIDs");
-    addText("Object IDs:")
-    addBinaryOption("Show", "Hide", "ALEI_ShowIDs", "showIDs", "showids")
-*/
-
-    /*aleiMakeSettingButtons(
-        "Z-Index:",
-        false,
-        "ALEI_ShowZIndex",
-        "showZIndex",
-        PR_ShowHide
-    );*/
-
-    aleiMakeSettingButtons(
-        "Same Parameters:",
-        false,
-        "ALEI_ShowSameParameters",
-        "showSameParameters",
-        PR_ShowHide
-    );
-
-    aleiMakeSettingButtons(
-        "Grid by snap:",
-        false,
-        "ALEI_gridBasedOnSnapping",
-        "gridBasedOnSnapping",
-        [["Yes", true], ["No", false]]
-    );
-
-    // Render object names
-    registerButton("showObjectNames", [true, false], "renderObjectNames");
-    addText("Show object names: ");
-    addBinaryOption("Yes", "No", "ALEI_RenderObjectNames", "renderObjectNames", "showObjectNames", (status) => ALEI_UpdateNameRenderSetting(status));
-
-    // Remap UID
-    registerButton("remapUID", [true, false], "rematchUID");
-    addText("Remap UID: ");
-    addBinaryOption("Enabled", "Disabled", "ALEI_RemapUID", "rematchUID", "remapUID", (status) => ALEI_UpdateRematchUIDSetting(status));
-
-    aleiMakeSettingButtons(
-        "Extended triggers:",
-        true,
-        "ALEI_ExtendedTriggersEnabled",
-        "extendedTriggers",
-        [["Enabled", true], ["Disabled", false]]
-    );
-
-    aleiMakeSettingButtons(
-        "Ordered Naming:",
-        true,
-        "ALEI_orderedNaming",
-        "orderedNaming",
-        [["Yes (Slow)", true], ["No (Fast)", false]]
-    );
-
-    aleiMakeSettingButtons(
-        "Custom Renderer:",
-        true,
-        "ALEI_Renderer_Enabled",
-        "customRenderer",
-        [["Enabled", true], ["Disabled", false]]
-    );
-
-    window.ALEI_settingsMenu = mainWindow;
-    document.body.appendChild(mainWindow);
-    ALEI_settingUpdateButtons();
-    aleiLog(DEBUG, "Created settings window.");
-}
-
-let aleiSettingButtonsMap = {}
-
-window.ALEI_settingUpdateButtons = () => {
-    let defaultClass = "ALEI_settingsMenuButton";
-    let clickedClass = "ALEI_settingsMenuButton ALEI_settingMenuButtonClicked";
-
-    for (let entry of Object.entries(aleiSettingButtonsMap)) {
-        let identity = entry[0];
-        let values = entry[1][0];
-        let dict = entry[1][1];
-        let key = entry[1][2];
-
-        let currentVal = dict[key];
-        for (let value of values) {
-            $query(`#ALEI_${identity}_${value}`).setAttribute("class", defaultClass);
-        }
-        $query(`#ALEI_${identity}_${currentVal}`).setAttribute("class", clickedClass);
-    }
-}
-
-
-function showSettings() {
-    if (ALEI_settingsMenu === undefined) createALEISettingsMenu();
-
-    mrdimlights.style.display = 'block';
-    ALEI_settingsMenu.style.display = 'block';
-    dim_undo = "ALEI_settingsMenu.style.display = 'none'";
-};
 
 function patchTeamList() {
     for (let entry of Object.entries(VAL_TABLE["team"])) {
@@ -3575,7 +3088,7 @@ function patchTeamList() {
         if (teamID === -1) continue;
         VAL_TABLE["team+any"][teamID] = teamName;
     }
-    aleiLog(DEBUG, "Edited team list..");
+    aleiLog(logLevel.DEBUG, "Edited team list..");
 }
 
 function addProjectileModels() {
@@ -3639,7 +3152,7 @@ function addProjectileModels() {
     for (let i = 1; i < 56; i++) {
         projectileModels[i] = `<img src='${projectileModels[i]}' style='width: 60px; height: 20px'/>`;
     }
-    aleiLog(DEBUG, "Loaded projectile models.");
+    aleiLog(logLevel.DEBUG, "Loaded projectile models.");
 }
 
 function patchSpecialValue() {
@@ -3657,13 +3170,13 @@ function patchSpecialValue() {
             return special_value("timer", value);
         }else return _OG(base, value);
     }
-    aleiLog(DEBUG, "Patched SpecialValue");
+    aleiLog(logLevel.DEBUG, "Patched SpecialValue");
 }
 
 function notifyUpdate(version) {
     newUpdate = 1;
 
-    aleiLog(INFO, `New update: ${version}`);
+    aleiLog(logLevel.INFO, `New update: ${version}`);
     NewNote(`ALEI: There is new update: ${version}, you are currently in ${GM_info.script.version}<br>Press Ctrl + Shift to update`, "#FFFFFF");
 }
 
@@ -3684,7 +3197,7 @@ function notifyIfTheresUpdate(script) {
 
     if(latestVersion > currentVersion) return notifyUpdate(version);
 
-    aleiLog(INFO, `REMOTE: ${version}, LOCAL: ${GM_info.script.version} => No update detected.`);
+    aleiLog(logLevel.INFO, `REMOTE: ${version}, LOCAL: ${GM_info.script.version} => No update detected.`);
 }
 
 let updateURL;
@@ -3744,7 +3257,7 @@ function ALEI_DoWorldScale() {
 }
 function patchPercentageTool() {
     window.DoWorldScale = ALEI_DoWorldScale;
-    aleiLog(DEBUG, "Patched percentage tool");
+    aleiLog(logLevel.DEBUG, "Patched percentage tool");
 }
 
 function _encodeXMLChars(value) {
@@ -3769,7 +3282,7 @@ function patchCompileTrigger() {
         }
         return result;
     }
-    aleiLog(DEBUG, "Patched CompileTrigger");
+    aleiLog(logLevel.DEBUG, "Patched CompileTrigger");
 }
 
 function addPasteFromPermanentClipboard() {
@@ -4090,7 +3603,7 @@ function patchClipboardFunctions() {
     }
 
     window.triggerActionsPreventError = triggerActionsPreventError;
-    aleiLog(DEBUG, "Patched clipboard related functions.");
+    aleiLog(logLevel.DEBUG, "Patched clipboard related functions.");
 }
 
 function patchDrawGrid() {
@@ -4103,7 +3616,7 @@ function patchDrawGrid() {
             old_lg(param1, param2)
         }
     }
-    aleiLog(DEBUG, "Patched LG");
+    aleiLog(logLevel.DEBUG, "Patched LG");
 }
 
 function patchNewNote() {
@@ -4505,7 +4018,7 @@ function extendTriggerList() {
         for (var i = 1; i <= totalNumOfActions; i++) {
             var mark_obj = document.getElementById('pm_actions_' + i + '_type');
             if (mark_obj == null) {
-                aleiLog(SWARN, "Failed to retrieve HTML element of property to dynamically apply property type.");
+                aleiLog(logLevel.SWARN, "Failed to retrieve HTML element of property to dynamically apply property type.");
                 break;
             }
 
@@ -4651,6 +4164,9 @@ function extendTriggerList() {
             entity.pm["additionalParamB"].shift();
             index++;
         }
+
+        // ocm update so it doesn't become invalid
+        if (aleiSettings.ocmEnabled) ocmHandleObjectsCreation(allGeneratedTriggers);
 
         // Delete all generated triggers.
         for(const newTrigger of allGeneratedTriggers){
@@ -4923,24 +4439,6 @@ function parseExtendedTriggers(){
     }
 }
 
-/**
- * Function that adds new CSS style to ALE.
- * - Add style rule for 2 side by side button
- *
- * This function is run once in ALE_Start.
- */
-function updateCSSFile() {
-    const cssFile = document.styleSheets[0];
-
-    if(!cssFile){
-        aleiLog(WARN, "Failed to update CSS file.");
-        return;
-    }
-
-    // Creates a new rule for class two-element-grid, useful as a parent div.
-    cssFile.insertRule(".two-element-grid{ display: grid; justify-content: center; grid-template-columns: 50% 50%; }", 0);
-}
-
 function patchRender() {
     // This is where Render will be patched.
     // Due to nature of this function, maybe it'll be better to call this function each time a patch is needed.
@@ -4971,15 +4469,10 @@ let ALE_start = (async function() {
     alreadyStarted = true;
     'use strict';
 
-    window.ALEIAPI = {};
-
     VAL_TABLE = special_values_table;
     ROOT_ELEMENT = document.documentElement;
     stylesheets = document.styleSheets;
     ALE_Render = Render;
-
-    // Updates the current CSS stylesheet.
-    updateCSSFile();
 
     // Handling rest of things
     addPropertyPanelResize();
@@ -5051,15 +4544,23 @@ let ALE_start = (async function() {
     registerCommentAdderButton();
     registerCommentRemoverButton();
 
-    if(isNative) {
+    ocmpatches.patchUpdatePhysicalParams();
+    ocmpatches.patchStartNewMap();
+
+    if(isNative && !GM_info.script.name.includes("Local")) {
         updateURL = GM_info.script.updateURL;
         // repository = updateURL.split( "raw/" )[0];
         checkForUpdates();
     }
     changeTopRightText();
 
-    aleiLog(DEBUG2, "Settings: " + JSON.stringify(aleiSettings));
-    ALEI_UpdateNameRenderSetting(aleiSettings.renderObjectNames);
+    aleiLog(logLevel.DEBUG2, "Settings: " + JSON.stringify(aleiSettings));
+
+    // update stuff for render object names setting
+    window.ENABLE_TEXT = aleiSettings.renderObjectNames;
+    window.need_redraw = true;
+    window.UpdateTools();
+
 
     let ALE_PreviewQualitySet = window.PreviewQualitySet;
     window.PreviewQualitySet = (val) => {
@@ -5080,7 +4581,7 @@ let ALE_start = (async function() {
     // map load is unsuccessful if it happens before alei is initialized
     // alei enters a bugged state if map load is unsuccessful
     if (es.length > 0) {
-        aleiLog(DEBUG, "Map was loaded unsuccessfully. Doing it again");
+        aleiLog(logLevel.DEBUG, "Map was loaded unsuccessfully. Doing it again");
         
         // this is most of the stuff from StartNewMap (except setting mapid and calling ResetView)
         es = [];
@@ -5094,14 +4595,14 @@ let ALE_start = (async function() {
 
     NewNote("ALEI: Welcome!", "#7777FF");
     NewNote(`Don't forget to join discord server! discord.gg/K5jcNEvZ85`, "#7777FF");
-    aleiLog(INFO, `Welcome!`);
+    aleiLog(logLevel.INFO, `Welcome!`);
     if(isNative) {
-        aleiLog(INFO, `TamperMonkey Version: ${GM_info.version} ALEI Version: ${GM_info.script.version}`);
+        aleiLog(logLevel.INFO, `TamperMonkey Version: ${GM_info.version} ALEI Version: ${GM_info.script.version}`);
     } else {
         let message = "You are running ALEI not under tampermonkey, this is not native ALEI, please load ALEI by tampermonkey when possible.";
         NewNote(`ALEI: ${message}`, "#FFFF00");
         NewNote(`ALEI: Check https://github.com/Molisson/ALEI for more details.`, "#FFFF00");
-        aleiLog(INFO, message);
+        aleiLog(logLevel.INFO, message);
         NewNote(`ALEI: Reminder that ALEI under tampermonkey is bound to break less than without.`, "#FFFFFF");
     }
 });

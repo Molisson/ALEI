@@ -1,15 +1,6 @@
-// ==UserScript==
-// @name         ALEI Renderer
-// @namespace    http://tampermonkey.net/
-// @version      5.1
-// @description  try to take over the world!
-// @author       Lisandra
-// @match        *://*.plazmaburst2.com/level_editor/map_edit.php*
-// @icon         https://github.com/Molisson/ALEI/blob/main/icon.png?raw=true
-// @run-at       document-start
-// ==/UserScript==
-
-"use strict";
+import { outgoingConnectionsMap, incomingConnectionsMap } from "./ocm/ocm.js";
+import { aleiSettings } from "./storage/settings.js";
+import { aleiLog, logLevel } from "./log.js";
 
 let window = unsafeWindow;
 
@@ -17,7 +8,6 @@ let window = unsafeWindow;
 let decorRequestsOnProgress = [];
 let backgroundRequestsOnProgress = [];
 let boxModelImages = {};
-let aleiRunning = false;
 let haveForcedRecalculation = false;
 // Statistic purposes.
 let displayFPS = 0;
@@ -56,20 +46,6 @@ let s2w_w;
 // For Preview mode.
 let previewBackground = "1";
 
-// Settings, themes.
-function _readStorage(key_, defaultValue, func) {
-    let key = `ALEI_Renderer_${key_}`;
-    let val = localStorage[key];
-    if (val === undefined) return defaultValue;
-    return func(localStorage[key])
-}
-
-let toggles = {
-    cartoonishEdges                   : _readStorage("CartoonishEdges"          , false, (val) => val === "true"),
-    originalSelectOverlay             : _readStorage("OriginalSelectOverlay"    , false, (val) => val === "true"),
-    boxRendering                      : _readStorage("PreviewWalls"             , false, (val) => val === "true"),
-    showTextPlaceholderDecors         : _readStorage("ShowTextPlaceholderDecors", true , (val) => val === "true")
-}
 let themes = {
     0: { // THEME_BLUE
         // Grid colors.
@@ -90,8 +66,8 @@ let themes = {
         highLightedObjEdgeOpacity: 1,
         // Object connection line.
         objectConnectionDash: [4, 4],
-        objectConnectionToColor: "#66ff66",
-        objectConnectionFromColor: "#ffffff",
+        objectConnectionOutgoingColor: "#66ff66", // old name objectConnectionToColor
+        objectConnectionIncomingColor: "#ffffff", // old name objectConnectionFromColor
         objectConnectionOpacityFactor: 1 // TODO: Should this just be "opacity" and not "opacity factor"?
 
     },
@@ -109,8 +85,8 @@ let themes = {
         highLightedObjEdgeColor: window.selgrd3,
         highLightedObjEdgeOpacity: 1,
         objectConnectionDash: [4, 4],
-        objectConnectionToColor: "#66ff66",
-        objectConnectionFromColor: "#ffffff",
+        objectConnectionOutgoingColor: "#66ff66",
+        objectConnectionIncomingColor: "#ffffff",
         objectConnectionOpacityFactor: 1
     },
     2: { // THEME_GREEN
@@ -127,8 +103,8 @@ let themes = {
         highLightedObjEdgeColor: window.selgrd3,
         highLightedObjEdgeOpacity: 1,
         objectConnectionDash: [4, 4],
-        objectConnectionToColor: "#66ff66",
-        objectConnectionFromColor: "#ffffff",
+        objectConnectionOutgoingColor: "#66ff66",
+        objectConnectionIncomingColor: "#ffffff",
         objectConnectionOpacityFactor: 1
     },
     3: { // THEME_PURPLE
@@ -145,8 +121,8 @@ let themes = {
         highLightedObjEdgeColor: window.selgrd3,
         highLightedObjEdgeOpacity: 1,
         objectConnectionDash: [4, 4],
-        objectConnectionToColor: "#66ff66",
-        objectConnectionFromColor: "#ffffff",
+        objectConnectionOutgoingColor: "#66ff66",
+        objectConnectionIncomingColor: "#ffffff",
         objectConnectionOpacityFactor: 1
     },
     4: { // ALEI Black Theme
@@ -163,8 +139,8 @@ let themes = {
         highLightedObjEdgeColor: window.selgrd3,
         highLightedObjEdgeOpacity: 1,
         objectConnectionDash: [4, 4],
-        objectConnectionToColor: "#66ff66",
-        objectConnectionFromColor: "#ffffff",
+        objectConnectionOutgoingColor: "#66ff66",
+        objectConnectionIncomingColor: "#ffffff",
         objectConnectionOpacityFactor: 1
     }
 }
@@ -201,7 +177,7 @@ let regionImages = {} // Will be filled later.
 function _DrawRectangle(color, opacity, x, y, w, h, edge) {
     ctx.globalAlpha = opacity;
     if(edge) {
-        if(toggles.cartoonishEdges) ctx.strokeColor = color;
+        if(aleiSettings.cartoonishEdges) ctx.strokeColor = color;
         else ctx.strokeStyle = color;
         draw_rect_edges(x, y, w, h)
     }else {
@@ -285,12 +261,12 @@ function RenderSingleResizableObject(element, cns) {
     }
 
     if(window.SHOW_TEXTURES) {
-        if((elemClass == "box") && !(toggles.boxRendering)) {
+        if((elemClass == "box") && !(aleiSettings.boxRendering)) {
             color = "#000";
             opacityFactor = 1;
             edgeColor = "#333";
         }
-        else if((elemClass == "box") && (toggles.boxRendering)) {
+        else if((elemClass == "box") && (aleiSettings.boxRendering)) {
             let image = boxModelImages[pm.m];
             if(image == undefined) {
                 image = new Image();
@@ -372,12 +348,12 @@ function RenderSingleResizableObject(element, cns) {
         edgeOpacityFactor = currentTheme.highLightedObjEdgeOpacity / layerAlpha;
     }
 
-    if(element.selected && !toggles.originalSelectOverlay) {
+    if(element.selected && !aleiSettings.originalSelectOverlay) {
         edgeColor = currentTheme.selectOutlineColor;
         edgeOpacityFactor = currentTheme.selectEdgeOpacityFactor;
     }
 
-    if(!( (window.SHOW_TEXTURES) && ( (elemClass == "bg") || ((elemClass == "box") && toggles.boxRendering) ) )) _DrawRectangle(color, layerAlpha * opacityFactor, x, y, w, h, false); // Object itself.
+    if(!( (window.SHOW_TEXTURES) && ( (elemClass == "bg") || ((elemClass == "box") && aleiSettings.boxRendering) ) )) _DrawRectangle(color, layerAlpha * opacityFactor, x, y, w, h, false); // Object itself.
     if(!window.SHOW_TEXTURES) _DrawRectangle(edgeColor, layerAlpha * edgeOpacityFactor, x, y, w, h, true); // Edge.
 }
 
@@ -428,7 +404,7 @@ function RenderSingleNonResizableObject(element, cns) {
         opacityFactor = currentTheme.highLightedObjEdgeOpacity / layerAlpha;
     }
 
-    if(element.selected && !toggles.originalSelectOverlay) {
+    if(element.selected && !aleiSettings.originalSelectOverlay) {
         color = currentTheme.selectOutlineColor;
         opacityFactor = currentTheme.selectEdgeOpacityFactor;
     }
@@ -482,7 +458,7 @@ function RenderSingleNonResizableObject(element, cns) {
         );
     } else {
         // Native
-        if ( toggles.showTextPlaceholderDecors && ( pm.model === "text" || pm.model === "text2" || pm.model === "text3" ) ) {
+        if ( aleiSettings.showTextPlaceholderDecors && ( pm.model === "text" || pm.model === "text2" || pm.model === "text3" ) ) {
             // Font
             let size = 16 / zoom; // Hack.
             switch( pm.model ) {
@@ -603,7 +579,7 @@ function RenderObjectMarkAndName(element, cns) {
 
 function RenderSelectOverlay(element, cns) {
     if(!element.selected) return;
-    if(!toggles.originalSelectOverlay) return;
+    if(!aleiSettings.originalSelectOverlay) return;
 
     ctx.globalAlpha = 0.2;
     ctx.fillStyle = window.selgrd2;
@@ -697,42 +673,31 @@ function RenderConnectionLines(element, cns) {
     if(!window.SHOW_CONNECTIONS) return;
     if(!element.exists) return;
     if(!element.selected) return;
-    if(!aleiRunning) return;
-
-    let layerAlpha = window.MatchLayer(element) ? 1: 0.3;
-
-    let ocm = window.ObjectConnectionMapping;
-    let utem = window.uidToElementMap;
-    let uid = element.pm.uid;
-
-    if(uid == undefined) return;
-    if(ocm.length == 0) return;
-    if(ocm[uid] == undefined) return;
-    if((ocm[uid].by.length == 0) && (ocm[uid].to.length == 0)) return;
-
-    let referredBy = ocm[uid].by;
-    let referringTo = ocm[uid].to;
+    if(!aleiSettings.ocmEnabled) return;
+    if((outgoingConnectionsMap.get(element) === undefined || incomingConnectionsMap.get(element) === undefined)) return; // this shouldn't happen but just in case
+    if((outgoingConnectionsMap.get(element).length == 0) && (incomingConnectionsMap.get(element).length == 0)) return;
 
     let fromX, toX;
     let fromY, toY;
-
-    fromX = cns.x + cns.w/2;
-    fromY = cns.y + cns.h/2;
-
+    
+    let layerAlpha = window.MatchLayer(element) ? 1: 0.3;
     ctx.globalAlpha = layerAlpha * currentTheme.objectConnectionOpacityFactor;
     ctx.lineWidth = 1;
-    ctx.strokeStyle = currentTheme.objectConnectionToColor;
     ctx.setLineDash(currentTheme.objectConnectionDash);
 
+    ctx.strokeStyle = currentTheme.objectConnectionOutgoingColor;
+    fromX = cns.x + cns.w/2;
+    fromY = cns.y + cns.h/2;
+    
     // TODO: How can we batch line draws?
     // All of them will have same color. (By all, I mean every line that a loop handles.)
     // So it's best if we just batch them, but how do we do that?
 
-    for(let to of referringTo) {
-        // Do not create invisible lines if the trigger or timer doesn't exist.
-        if ( !utem[to].exists ) continue;
+    for(let to of outgoingConnectionsMap.get(element)) {
+        // Do not draw lines if the object doesn't exist.
+        if (!to.exists) continue;
 
-        let ocns = GetObjectCoordAndSize(utem[to]);
+        let ocns = GetObjectCoordAndSize(to);
         toX = ocns.x + ocns.w/2;
         toY = ocns.y + ocns.h/2;
 
@@ -742,15 +707,15 @@ function RenderConnectionLines(element, cns) {
         ctx.stroke();
     }
 
-    ctx.strokeStyle = currentTheme.objectConnectionFromColor;
+    ctx.strokeStyle = currentTheme.objectConnectionIncomingColor;
     toX = fromX;
     toY = fromY;
 
-    for(let by of referredBy) {
-        // Do not create invisible lines if the trigger or timer doesn't exist.
-        if ( !utem[by].exists ) continue;
+    for(let by of incomingConnectionsMap.get(element)) {
+        // Do not draw lines if the object doesn't exist.
+        if (!by.exists) continue;
 
-        let ocns = GetObjectCoordAndSize(utem[by]);
+        let ocns = GetObjectCoordAndSize(by);
         fromX = ocns.x + ocns.w/2;
         fromY = ocns.y + ocns.h/2;
 
@@ -897,13 +862,6 @@ function DisplayStatistics() {
         renderedObjectsCountText = document.createElement("p");
         renderedObjectsCountText.className = "gui-render-info__text";
 
-        if (isNative) {
-            fpsText.style.padding = 0;
-            fpsText.style.margin = 0;
-            renderedObjectsCountText.style.padding = 0;
-            renderedObjectsCountText.style.margin = 0;
-        }
-
         element.appendChild(fpsText);
         element.appendChild(renderedObjectsCountText);
 
@@ -970,7 +928,7 @@ function HandleSingleFrame() {
 
     DisplayStatistics();
 
-    if(aleiRunning && !haveForcedRecalculation) {
+    if(!haveForcedRecalculation) {
         let elem = document.getElementById("rparams");
         if(elem == undefined) return;
         window.ShowHideObjectBox();
@@ -991,35 +949,7 @@ function PreviewModeUpdateVariables(val) {
     }
 }
 
-function RegisterSettingsToALEI() {
-    if(!window.ALEI_Active) return;
-    aleiRunning = true;
-
-    let ALEIAPI = window.ALEIAPI;
-
-    if(ALEIAPI == undefined) {
-        setTimeout(RegisterSettingsToALEI, 1000);
-        return;
-    }
-
-    let settings = ALEIAPI.settings;
-
-    settings.addText("[R] Cartoonish Edges:", false);
-    settings.createButtons("ALEI_Renderer_CartoonishEdges", toggles, "cartoonishEdges", [["Yes", true], ["No", false]]);
-
-    settings.addText("[R] Original Select:", false);
-    settings.createButtons("ALEI_Renderer_OriginalSelectOverlay", toggles, "originalSelectOverlay", [["Yes", true], ["No", false]]);
-
-    settings.addText("[R] Preview walls:", false);
-    settings.createButtons("ALEI_Renderer_PreviewWalls", toggles, "boxRendering", [["Yes", true], ["No", false]]);
-
-    settings.addText("[R] Render placeholders:", false);
-    settings.createButtons("ALEI_Renderer_ShowTextPlaceholderDecors", toggles, "showTextPlaceholderDecors", [["Yes", true], ["No", false]]);
-
-    window.ALEI_settingUpdateButtons();
-}
-
-export function ALEI_Renderer_OnDocumentLoad() {
+export function Renderer_initialize() {
     ctx = window.ctx;
 
     // Draw functions.
@@ -1054,28 +984,6 @@ export function ALEI_Renderer_OnDocumentLoad() {
     // Setting default values.
     lastTime = getTimeMs();
 
-    RegisterSettingsToALEI();
-    if(!aleiRunning) window.NewNote(`ALEI Renderer: You are not running with ALEI. Don't expect feature completeness as renderer depends on ALEI giving some informations.`, "#FFFF00");
-
     // Logging.
-    console.log(`[ALEI Renderer]: Active.`);
-}
-
-let isNative;
-
-try {
-    GM_info; // If this is running under tampermonkey.
-    
-    // If ALEI is not running us.
-    if (!GM_info.script.name.includes("ALE Improvements")) {
-       isNative = true;
-    } else {
-       isNative = false; // Or ALEI is running us.
-    };
-}
-catch(e) {isNative = true;}
-
-// This is to ensure renderer can still run as separate userscript. (Manual work has to be done by removing 'export' from above manually.)
-if(isNative) {
-    document.addEventListener("DOMContentLoaded", () => ALEI_Renderer_OnDocumentLoad());
+    aleiLog(logLevel.INFO, "[ALEI Renderer]: Active.");
 }

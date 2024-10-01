@@ -1,4 +1,5 @@
 import { updateALEIMapData, saveToALEIMapDataObject, initializeALEIMapData } from "./aleimapdata.js";
+import { aleiLog, logLevel } from "../log.js";
 
 export function patchSaveThisMap() {
     const old_SaveThisMap = unsafeWindow.SaveThisMap;
@@ -15,13 +16,18 @@ export function patchSaveThisMap() {
 }
 
 export function patchStartNewMap() {
-    const old_StartNewMap = unsafeWindow.StartNewMap;
-
     // set initial value for aleiMapData when a new map is created by pressing "New map". otherwise old data would 
     // persist. it might not be necessary to reset it cuz aleiMapData is only a middle step for the save/load 
     // operations but it seems dangerous anyway
-    unsafeWindow.StartNewMap = function() {
-        old_StartNewMap();
-        initializeALEIMapData();
+
+    unsafeWindow.initializeALEIMapData = initializeALEIMapData;
+
+    const oldCode = unsafeWindow.StartNewMap.toString();
+
+    let newCode = oldCode.replace("ClearUndos();", "ClearUndos(); initializeALEIMapData();")
+    if (newCode === oldCode) {
+        aleiLog(logLevel.WARN, "StartNewMap direct code replacement failed (aleimapdata)");
     }
+
+    unsafeWindow.StartNewMap = eval("(" + newCode + ")");
 }
