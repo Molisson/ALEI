@@ -42,7 +42,6 @@ let stylesheets = document.styleSheets;
 let VAL_TABLE = {}; // Will be filled later.
 let displayOperationCompleteNotes = true;
 let REGION_EXECUTE_PARAM_ID; // Will be set later.
-let OCM_LOADED = true; // Assume empty map.
 let ExtendedTriggersLoaded = false;
 
 const INFO = 0;
@@ -51,7 +50,6 @@ const DEBUG2 = 2;
 const VERBOSE = DEBUG2; // Alias.
 const WARN = -1;
 const SWARN = -2;
-const __OCM_CHECKED_KEYS = ["target", "attach", "use_target", "incar", "ondeath", "callback"]; // OCM = Object Connection Mapping
 
 const TEXT_OVERHEAD         = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAAYCAYAAAAxkDmIAAAAAXNSR0IArs4c6QAABHNJREFUaEPtmVvoZWMYxn+PMznEBSGlxAVuJKUcQyTHUCahEZNG43wYx8HIMIjJjPk3MimD0EyMQ0oRrpxKkblwKBdDcoFBktNrPbt3a82atfde/zV/snfru137W+v93ud5n/d5vy26NdEZ0ESfrjscHcATToIO4A7gCc/AhB+vtoIj4gLgEeA9SScMy0FEHAc8AWyQdNB08xURnwC7ABcCezf97qjvRMROwFvAvsA8SU9X90TEAcCLwP7Ao5Lm1r23+J33ngNMSbpy1LfbPC/nQdIbo95RydvSfg6reycWYCcoIh4ArgBWSzqvBuCbgNuAbYHPgNOL331a/l1EHA48A2wHXCTp1VHJb/O8A7hF1iLiZOBx4CfglBrw3i7AP7h49j5wFHCXpHsqAJsEC4rnr0s6tUUYjbaMDcARcQZwJ2C53qpyuj+BLzKRT2aVDZToiDgQuA84Btix8q5I4F4C5koyiJusiHgZOB5YWAYvIk4DHgM+LyT6KWAx8G61JRUtyCQ4BJgPvNk0HuDMbDd/pUJYAfpraB4ssxFxTXG+a4E9i3xWlXZDcZ4tgB+ztbWW6I+KD6wYQcFdAbP8O+BiwP1qB+AWSSsr1eDndwO/AbPzIMMAdn88EVhl0kha339fSuf9gCV0haR5AwC+LMH7sPje0aX9U5ZcYEnG5H69V1mGI8KyvqyI9cskmYnQKB6TJQHeOlVkvkmY3sDgXQ18ayJIWlfpqbvn3l+A6yW5RfRWkt45NEG/2VyAbVSarnXAswV4NwMvSJo1IOEO1uxeJGnhIJOVpHkO+KNOXvOw/SpcL+nQAd/bxGyVzJWrapakdyLiXuAqg9E3W2muzi4MzEPAGqBxPEkcG9WPJR1RjS2V5VjgRknLKnk4C5gDLJV0Xc1em8NXCuJuv7kAT8tFZxIsZduMYIUreLGkBUMAXjTKnTd18AmeK2aNzVZE3FDEd0cSsWe+SmbqV5stYLc0V35sslqVhk4L5XgKU2bCDJxEImI2YEVZK2ltJQ+OyZNML0cDiFtWvtYS3RbgVYWcXtKk9P8jgPtO+HerAfBgSq5lc3lJ/tyve1UFuPLtsK1GJsXIcXA6ANdUZRmw/y3ATST69uwfKyVN/dsSXQLP3sCtwYCeD3xtkMvmLCL6/dr9eOd02L0ZOiIOaynRI4skFaQM8LnpDx5uKNG+q7DCLK9OCjM6BwPuFx5LvOpM1knuKyl/cyQ9P+yiIyJssjzqrE6zUTZZdtg2QB5vBpqsEsB9w2RXa0e+RJIr9Z9VuhzxxceWwAcVY9Y4npLJagPwfunWf25ostyL7Sdeq04TMwqwb7LS3l8O7JNJ2iiHwPd5I3RrDXM3uslKx2iDc2QytPquHwCPSa6y2jGpAqBHHhPiK5uTuhujvBzxbZXNXXW0MqkaxVMak6YNcE4X9giXFrnaY8bHpCa9s/vNeGSg+zdpPHBqHWUHcOvUjcfGDuDxwKl1lB3ArVM3Hhs7gMcDp9ZRdgC3Tt14bOwAHg+cWkf5N7oPsDdbjPHbAAAAAElFTkSuQmCC";
 const TEXT_SCORE            = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHwAAAAYCAYAAAA4e5nyAAAAAXNSR0IArs4c6QAAA0hJREFUaEPtmbuvTUEUxn/TiAbREUElEXqJQiIoNKIRhYQGlUY0HoVCpxGNaFC4EYmKRhQehUShFaKg9AeIimac2Zk5WXfOmsfeZ3Ozc+d29+6ZWbO+bz2+NdfQftYVAmZdeducpRG+zoKgEd4IB2vtWeAe8MwYc0FiYq19DRwALhljVkp4ibM2ibUPlXMfAOfFml+1Nkp30L5ba28BV4H3xphj8RrxfSW+6xB7YY/H76g44wdwzhjztnSutfYI8Bj4aYzZH/ESOPuo+RPWqhk+JuHRpQLIWRD7BlUJqAThWYCstS4A3ZrbxpibQ2yU9lhrPwNbGuE9q0gJ2AThyWxx6xvhHjUt+5Sy/UfLjNoyWZPhPjv2CTK/xGWuFAgyw4AzvqW8cSUx4afLyKxN6SNwUKzvzo0qXjbDFVw/ALvXtKRrvdCDdSgmfSzCPVE7Q48Xvc3hWdUPfRY7PbLX7QFuzPq5661d4MTlttam8NFpkOeh/1trn860z0upe3IlXevXIsgXglsEx1I9XAotGZydoAKc4FgQESlxMQbhqTNqz44yzPXp096Xa8BGYDNwBXC/48lXtYdmU/ztW6niFAhf0BC5s8ciPKvSPXg5Nd9lT1CgtaTkSrrvrR1JUbZUqVRFRF4GHgEngHfASeAJcAr46sv7PDBKNmt99BUmWdI9BjF+OZUevnV3TrWzpVT6DJg9frTZkDCwauSoBaNAuDoWiqqSdVgZZe4AL4DjwHWf2d+Bw2EsTd1Hs1nrYwXhC8FQGMsC4a9yY+SyhLt7qxmeUMZLj2UjZ3ioCp+AbbMWddH38q2zrN8F3HcjWR+bIxI+1xeiQmYni5JI7VpUYUYtlfTQw6uyKjffp3pr/Lgzcg8PAO4QYi2Ub3elu57wIT28+GCjle2AgzYW9tEH/6SkOzJSL1beme1SuORKktJb3SuYClqtYq6JeKF8u9c/4c9vqRNqbfbM8OTjzlqp9Kqn1cTzqToXC0BC31+YT8XIFJ4gF+b6MeZwYWc+QuZGvBqbfQgXfTzM9quek//bHF6TGW3NNBFo/y2bJm+Db90IHwzdNDc2wqfJ2+BbN8IHQzfNjY3wafI2+NaN8MHQTXNjI3yavA2+9V/XCzNGz/W2wgAAAABJRU5ErkJggg==";
@@ -1077,9 +1075,6 @@ function addSnappingOptions_helper() {
 }
 
 window.ALEI_UpdateRematchUIDSetting = function(value) {
-    if(value && !OCM_LOADED && aleiSettings.ocmEnabled) CreateConnectionMapping(); // To create OCM.
-    if(!value && OCM_LOADED && aleiSettings.ocmEnabled) CreateConnectionMapping(); // To clear OCM. (As it might be already outdated by the time rematch UID gets enabled)
-
     aleiSettings.rematchUID = value;
     writeStorage("ALEI_RemapUID", value);
     UpdateTools();
@@ -1337,92 +1332,6 @@ function updateUIDReferences(oldName, newName) {
     window.need_GUIParams_update = true;
 }
 
-/*
- * __OCM_EnsureValidReferences
- * This function is called in UpdatePhysicalParam(AFTER parameter was set.) to keep integrity of OCM (Object Connection Mapping)
- * Essentially just a function making sure the structure is valid on each parameter change.
- *
- * @param {E}     obj    PB2 Object to ensure validity of references of.
-*/
-function __OCM_EnsureValidReferences(obj) {
-    let ocm = window.ObjectConnectionMapping;
-    let utem = window.uidToElementMap;
-
-    let pm = obj.pm;
-    if(ocm[pm.uid] === undefined) return;
-
-    let newReferences = [];
-    function addReference(value) {
-        if(newReferences.indexOf(value) === -1) newReferences.push(value);
-    }
-
-    for(let key of Object.keys(pm)) {
-        if(__OCM_CHECKED_KEYS.indexOf(key) === -1) continue;
-        let value = pm[key];
-
-        if(utem[value] !== undefined) {
-            addReference(value);
-            continue;
-        }
-    }
-
-    function Trigger_HandleParameter(trigger, parameter) {
-        if(typeof(parameter) !== "string") return;
-
-        if(utem[parameter] !== undefined) { // Simple case where parameter is simply reference to object.
-            addReference(parameter);
-            return;
-        }
-        if(!parameter.includes(",")) return;
-        // A little complex case where multiple objects are referenced
-        // As in Parameter B: #region*1,#region*2
-        let splt = parameter.split(",");
-        for(let value of splt) {
-            let val = value.trim();
-            if(utem[val] !== undefined) addReference(val);
-        }
-    }
-
-    if(obj._class == "trigger") {
-        // Vanilla trigger case (10 actions, extended triggers will run this too)
-        for(let i = 1; i < 11; i++) {
-            if(pm[`actions_${i}_type`] == -1) continue;
-            if(pm[`actions_${i}_type`] === undefined) continue;
-            Trigger_HandleParameter(pm.uid, pm[`actions_${i}_targetA`]);
-            Trigger_HandleParameter(pm.uid, pm[`actions_${i}_targetB`]);
-        }
-        // Extended triggers.
-        if(pm.extended && aleiSettings.extendedTriggers) {
-            let actions = pm.additionalActions;
-            let paramA = pm.additionalParamA;
-            let paramB = pm.additionalParamB;
-
-            for(let i = 0; i < actions.length; i++) {
-                if(actions[i] === -1) continue;
-                Trigger_HandleParameter(pm.uid, paramA[i]);
-                Trigger_HandleParameter(pm.uid, paramB[i]);
-            }
-        };
-
-
-    }
-
-    let oldReferences = ocm[pm.uid]["to"];
-    // let newReferences
-    for(let ref of newReferences) {
-        if(oldReferences.indexOf(ref) !== -1) continue; // No change.
-        // This wasn't in old reference, but is now, so added.
-        __OCM_AddReference(pm.uid, ref);
-    }
-    for(let ref of oldReferences) {
-        if(newReferences.indexOf(ref) !== -1) continue; // No change.
-        // This was in old reference, but not anymore, so removed.
-        __OCM_RemoveReference(pm.uid, ref);
-
-    }
-
-}
-
 /**
  *  This function updates the actual entity class's pm property based on selection.
  *  This function is invoked from setletedit().
@@ -1467,27 +1376,8 @@ function UpdatePhysicalParam(paramname, chvalue, toShowNote = true) {
             if((paramname == "uid") && aleiSettings.rematchUID) {
                 let oldName = es[elems].pm[paramname]; // Note: don't do this after getting original ES, otherwise id isn't valid lmao
                 window.es = ogES;
-                // Making sure we keep names unique for OCM structure
-                if(window.uidToElementMap[chvalue] !== undefined) {
-                    NewNote(`ALEI: Object with name ${chvalue} already exists, consider naming it differently.`, "#FFFF00");
-                    return;
-                }
+
                 updateUIDReferences(oldName, chvalue);
-
-                if(aleiSettings.ocmEnabled) {
-                    let ocm = window.ObjectConnectionMapping;
-                    ocm[chvalue] = ocm[oldName];
-                    delete ocm[oldName];
-
-                    function redirectConnections(obj, oldName, newName) {
-                        let index = ocm[obj]["to"].indexOf(oldName);
-                        if(index !== -1) ocm[obj]["to"][index] = newName;
-                        index = ocm[obj]["by"].indexOf(oldName);
-                        if(index !== -1) ocm[obj]["by"][index] = newName;
-                    }
-                    ocm[chvalue]["by"].map(v => redirectConnections(v, oldName, chvalue));
-                    ocm[chvalue]["to"].map(v => redirectConnections(v, oldName, chvalue));
-                }
 
                 ogES = window.es;
                 window.es = SelectedObjects;
@@ -1529,7 +1419,7 @@ function UpdatePhysicalParam(paramname, chvalue, toShowNote = true) {
 
 
         }
-        if(aleiSettings.ocmEnabled) __OCM_EnsureValidReferences(es[elems]);
+
         if(paramname == "uses_timer") { // I do not have to do this, but i will for convenience
             if([true, "true"].indexOf(es[elems].pm.uses_timer) != -1) {
                 param_type[REGION_EXECUTE_PARAM_ID][1] = "timer+none";
@@ -2849,10 +2739,6 @@ function patch_m_down() {
         let previousEsLength = es.length;
         og_mdown(e);
 
-        let ocm = ObjectConnectionMapping;
-        let utem = uidToElementMap;
-        let addedObjects = [];
-
         if (es.length > previousEsLength) { // New element is made.
             let element = es[es.length - 1];
             if (!("x" in element.pm)) return;
@@ -2868,19 +2754,11 @@ function patch_m_down() {
                 pm.w = round(pm.w);
                 pm.h = round(pm.h);
             }
-            // OCM mapping.
-            if(aleiSettings.ocmEnabled) {
-                for(let i = previousEsLength; i < es.length; i++) {
-                    ocm[es[i].pm.uid] = {"by": [], "to": []};
-                    utem[es[i].pm.uid] = es[i];
-                    addedObjects.push(es[i]);
-                }
-            }
+
             // Now we just update.
             window.need_GUIParams_update = true;
             UpdateGUIObjectsList();
         }
-        for(let obj of addedObjects) __OCM_HandleObject(obj); // I know I don't have to do this but I am careless right now.
     }
 }
 
@@ -3019,11 +2897,6 @@ function PasteFromClipBoard(ClipName) {
     var lo_x = Math.round((x1 - (min_x + max_x) / 2) / GRID_SNAPPING) * GRID_SNAPPING;
     var lo_y = Math.round((y1 - (min_y + max_y) / 2) / GRID_SNAPPING) * GRID_SNAPPING;
 
-    let ocm = ObjectConnectionMapping;
-    let utem = uidToElementMap;
-
-    let addedObjects = [];
-
     for (var i2 = from_obj; i2 < es.length; i2++) {
         if (typeof(es[i2].pm.uid) !== 'undefined') {
             var old_uid = es[i2].pm.uid;
@@ -3035,12 +2908,6 @@ function PasteFromClipBoard(ClipName) {
                 for (let param in es[i3].pm) {
                     es[i3].pm[param] = UUIDR_Replace(es[i3].pm[param], old_uid, es[i2].pm.uid);
                 }
-            }
-
-            if(aleiSettings.ocmEnabled) {
-                ocm[es[i2].pm.uid] = {"by": [], "to": []};
-                utem[es[i2].pm.uid] = es[i2];
-                addedObjects.push(es[i2]);
             }
         }
         if (typeof(es[i2].pm.x) !== 'undefined')
@@ -3066,7 +2933,6 @@ function PasteFromClipBoard(ClipName) {
     m_down_x += x1;
     m_down_y += y1;
     lfz(false);
-    for(let obj of addedObjects) __OCM_HandleObject(obj);
     assignObjectIDs();
     assignObjectPriority();
     window.need_redraw = true;
@@ -3161,9 +3027,7 @@ function ServerRequest_handleMapData(mapCode) {
 function handleServerRequestResponse(request, operation, response) {
     if (response.indexOf("var es = new Array();") != -1) {
         window.SelectedObjects = [];
-        OCM_LOADED = false;
         ServerRequest_handleMapData(response);
-        CreateConnectionMapping();
     }else if (response.indexOf("knownmaps = [") !== -1) {
         window.knownmaps = [];
         for (let map of response.match(/"(.*?)"/g)) {
@@ -5077,151 +4941,6 @@ function updateCSSFile() {
     cssFile.insertRule(".two-element-grid{ display: grid; justify-content: center; grid-template-columns: 50% 50%; }", 0);
 }
 
-// Creates mapping of object connections so that we don't recreate line mapping everytime.
-// This will be used in Render function for when we are drawing object connection lines.
-function __OCM_AddReference(from, to) {
-    let ocm = ObjectConnectionMapping;
-    if(ocm[from]["to"].indexOf(to) === -1) ocm[from]["to"].push(to);
-    if(ocm[to]["by"].indexOf(from) === -1) ocm[to]["by"].push(from);
-}
-function __OCM_RemoveReference(from, to) {
-    let ocm = ObjectConnectionMapping;
-    if(ocm[from]["to"].indexOf(to) !== -1) ocm[from]["to"].splice(ocm[from]["to"].indexOf(to), 1);
-    if(ocm[to]["by"].indexOf(from) !== -1) ocm[to]["by"].splice(ocm[to]["by"].indexOf(from), 1);
-}
-
-/*
- * __OCM_HandleObject
- * Function responsible for internal registration of object mappings.
- *
- *@param {E}   element   PB2 object to create connection mapping of.
-*/
-
-function __OCM_HandleObject(element) {
-    let ocm = ObjectConnectionMapping;
-    let utem = uidToElementMap;
-
-
-    if(element.pm.uid === undefined) return;
-    if(element.pm.uid === "#water") {
-        element.pm.uid = RandomizeName(element.pm.uid); // I don't see why not
-    };
-
-    function Trigger_HandleParameter(trigger, parameter) {
-        if(typeof(parameter) !== "string") return;
-
-        if(utem[parameter] !== undefined) { // Simple case where parameter is simply reference to object.
-            __OCM_AddReference(trigger, parameter);
-            return;
-        }
-        if(parameter.includes(",") == false) return;
-        // A little complex case where multiple objects are referenced
-        // As in Parameter B: #region*1,#region*2
-        let splt = parameter.split(",");
-        for(let value of splt) {
-            let val = value.trim();
-            if(utem[val] !== undefined) __OCM_AddReference(trigger, val);
-        }
-    }
-
-    // Eliminating parameters we don't need to look at.
-    for(let key of Object.keys(element.pm)) {
-        if(__OCM_CHECKED_KEYS.indexOf(key) === -1) continue;
-        let value = element.pm[key];
-        if(utem[value] === undefined) continue; // Not valid object, just skip.
-
-        __OCM_AddReference(element.pm.uid, value);
-    }
-    // Special case for trigger actions.
-    if(element._class !== "trigger") return;
-    let pm = element.pm;
-    // Vanilla trigger case (10 actions, extended triggers will run this too)
-    for(let i = 1; i < 11; i++) {
-        if(pm[`actions_${i}_type`] == -1) continue;
-        if(pm[`actions_${i}_type`] === undefined) continue;
-        Trigger_HandleParameter(pm.uid, pm[`actions_${i}_targetA`]);
-        Trigger_HandleParameter(pm.uid, pm[`actions_${i}_targetB`]);
-    }
-    // Extended triggers.
-    if(pm.extended === undefined) return;
-    if(!aleiSettings.extendedTriggers) return;
-
-    let actions = pm.additionalActions;
-    let paramA = pm.additionalParamA;
-    let paramB = pm.additionalParamB;
-
-    for(let i = 0; i < actions.length; i++) {
-        if(actions[i] === -1) continue;
-        Trigger_HandleParameter(pm.uid, paramA[i]);
-        Trigger_HandleParameter(pm.uid, paramB[i]);
-    }
-}
-
-/*
- * OCM_onObjectDelete
- * Function that gets called in DeleteSelection.
- * This just keeps Object Connection Map with latest data.
-
- * @param {E} element   PB2 element that got deleted.
-*/
-function OCM_onObjectDelete(element) {
-    if(!(aleiSettings.rematchUID && aleiSettings.ocmEnabled)) return;
-    if(element.pm.uid == undefined) return;
-    if(!OCM_LOADED) return;
-
-    let uid = element.pm.uid;
-    let ocm = window.ObjectConnectionMapping;
-    let utem = window.uidToElementMap;
-
-    let referredBy = ocm[uid].by;
-    let referringTo = ocm[uid].to;
-
-    // TODO: Make this bit safer? Some hard limit?
-    while(ocm[uid].by.length != 0) __OCM_RemoveReference(ocm[uid].by[0], uid);
-    while(ocm[uid].to.length != 0) __OCM_RemoveReference(uid, ocm[uid].to[0]);
-
-    // This cannot happen anymore
-    if((ocm[uid].by.length != 0) || (ocm[uid].to.length != 0)) {
-        NewNote(`ALEI: Something is wrong with Object Connection Map. Please regenerate map by loading the map again.`, `#FF0000`);
-        debugger;
-    }
-
-    delete utem[uid];
-    delete ocm[uid];
-
-}
-
-function CreateConnectionMapping() {
-    OCM_LOADED = false;
-    window.ObjectConnectionMapping = {};
-    window.uidToElementMap = {};
-
-    if(!aleiSettings.rematchUID) return; // Rematch UID is not necessarily a requirement for OCM but it is requirement if I wanna be lazy
-    if(!aleiSettings.ocmEnabled) return;
-
-    let ocm = ObjectConnectionMapping;
-    let utem = uidToElementMap;
-
-    for(let element of es) {
-        if(!element.exists) continue;
-        if(element.pm.uid === undefined) continue;
-        if(element.pm.uid === "#water") continue;
-
-        if(ocm[element.pm.uid] !== undefined) {
-            NewNote(`ALEI: 2+ objects share name ${element.pm.uid}, going to stop constructing object connection map.`, "#FF0000");
-            window.ObjectConnectionMapping = {};
-            return;
-        }
-
-        ocm[element.pm.uid] = {"by": [], "to": []};
-        utem[element.pm.uid] = element;
-    }
-
-    for(let element of es) __OCM_HandleObject(element);
-    OCM_LOADED = true;
-    aleiLog(DEBUG, "Built object connection map.");
-}
-
 function patchRender() {
     // This is where Render will be patched.
     // Due to nature of this function, maybe it'll be better to call this function each time a patch is needed.
@@ -5246,14 +4965,6 @@ function patchRender() {
     window.Render = eval(`(${fn})`);
 }
 
-function patchDeleteSelection() {
-    let og = window.DeleteSelection;
-    window.DeleteSelection = () => {
-        for(let selected of SelectedObjects) OCM_onObjectDelete(selected);
-        og();
-    };
-}
-
 let alreadyStarted = false;
 let ALE_start = (async function() {
     if(alreadyStarted) return;
@@ -5266,8 +4977,6 @@ let ALE_start = (async function() {
     ROOT_ELEMENT = document.documentElement;
     stylesheets = document.styleSheets;
     ALE_Render = Render;
-    window.ObjectConnectionMapping = {};
-    window.uidToElementMap = {};
 
     // Updates the current CSS stylesheet.
     updateCSSFile();
@@ -5334,7 +5043,6 @@ let ALE_start = (async function() {
     patchDrawGrid();
     addFunctionToWindow();
     createALEISettingsMenu();
-    patchDeleteSelection();
 
     aleimapdatapatches.patchSaveThisMap();
     aleimapdatapatches.patchStartNewMap();
