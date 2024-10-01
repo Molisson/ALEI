@@ -1,7 +1,7 @@
 import { fixWebpackStyleSheets } from "./loadcss.js";
 import { replaceThemeSet, patchSaveBrowserSettings, initTheme } from "./themes.js";
 import { parse as alescriptParse } from "./alescript.js";
-import { Renderer_initialize } from "./renderer.user.js"
+import { Renderer_initialize } from "./renderer.js"
 import { getALEIMapDataFromALEIMapDataObject, loadALEIMapDataIntoUse } from "./aleimapdata/aleimapdata.js";
 import * as aleimapdatapatches from "./aleimapdata/aleimapdatapatches.js";
 import { getCommentPositions } from "./comments/commentdata.js";
