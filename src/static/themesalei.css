@@ -130,7 +130,7 @@
     --settings-menu-button-color: #999;
     --settings-menu-button-hover-background-color: #444;
     --settings-menu-button-hover-color: #ccc;
-    --settings-menu-button-clicked-background-color: #666;
+    --settings-menu-button-clicked-background-color:
     --settings-menu-button-clicked-color: #ddd;
     --comment-background-color: #161616;
     --comment-border-color: #202020;
@@ -181,4 +181,187 @@
     --params-table-odd-row-background-color: rgb(75, 75, 75);
     --params-table-even-row-background-color: rgb(58, 58, 58);
     --params-table-row-hover-background-color: rgb(49, 49, 49);
+}
+
+.alei-sage-theme {
+    --settings-menu-label-background-color: #1d1d1d;
+    --settings-menu-label-color: #bbb;
+    --settings-menu-button-background-color: #333;
+    --settings-menu-button-border-color: #333;
+    --settings-menu-button-color: #999;
+    --settings-menu-button-hover-background-color: #444;
+    --settings-menu-button-hover-color: #ccc;
+    --settings-menu-button-clicked-background-color: #666;
+    --settings-menu-button-clicked-color: #ddd;
+    --comment-background-color: #161616;
+    --comment-border-color: #202020;
+    --comment-color: #808080;
+    --comment-adder-button-color: #808080;
+    --comment-remover-button-color: hsl(0, 90%, 35%);
+    --param-side-button-background-color: #202020;
+    --param-side-button-hover-background-color: #303030;
+    --param-side-button-active-background-color: #404040;
+    --gui-render-info-color: #FFFFFFD0;
+    --draggable-window-text-color: #d2d2d2;
+	--select-indicator-color: hsl(120, 75%, 30%);
+	--dropdown-background-color: rgb(150, 150, 150);
+	--dropdown-opener-border-color: rgb(95, 95, 95);
+	--dropdown-item-color: #000;
+	--dropdown-arrow-color: rgb(14, 14, 14);
+	--color-text-input-background-color: rgb(60, 60, 60);
+	--color-text-input-color: rgb(220, 220, 220);
+	--selectable-target-item-hover-color: rgb(85, 85, 85);
+	--selected-target-item-color: #f2f20d;
+	--target-quick-delete-button-color: #b00;
+    draggable-window {
+        --header-background-color: rgb(49, 49, 49);
+        --header-color: rgb(210, 210, 210);
+        --header-button-background-color: hsl(107, 29%, 38%);
+        --header-button-hover-background-color: hsl(107, 29%, 30.5%);
+        --header-button-active-background-color: hsl(107, 29%, 25.5%);
+        --header-button-color: rgb(210, 210, 210);
+        --header-button-border-color: hsl(220, 16%, 17%);
+        --content-background-color: rgb(33, 33, 33);
+        --shadow-color: #000;
+    }
+	color-spectrum, hue-slider {
+		--dot-border-color: rgb(220, 220, 220);
+	}
+    --update-button-highlight-color: #517e45;
+    --trigger-action-hovered-color: #181f16;
+    --trigger-action-selected-color: #273b21;
+    --trigger-action-dragged-brightness: 0.6;
+    --tab-view-separator-color: rgb(97, 97, 97);
+    --tab-label-background-color: rgb(77, 77, 77);
+    --tab-label-hover-background-color: rgb(61, 61, 61);
+    --tab-label-select-background-color: rgb(45, 45, 45);
+    --tab-label-text-color: #fff;
+    --tab-label-info-color: #eee;
+    --params-table-cell-border-color: rgb(112, 112, 112);
+    --params-table-header-background-color: rgb(41, 41, 41);
+    --params-table-odd-row-background-color: rgb(75, 75, 75);
+    --params-table-even-row-background-color: rgb(58, 58, 58);
+    --params-table-row-hover-background-color: rgb(49, 49, 49);
+}
+
+.alei-oeda-theme {
+    --settings-menu-label-background-color: #1d1d1d;
+    --settings-menu-label-color: #bbb;
+    --settings-menu-button-background-color: #333;
+    --settings-menu-button-border-color: #333;
+    --settings-menu-button-color: #999;
+    --settings-menu-button-hover-background-color: #444;
+    --settings-menu-button-hover-color: #ccc;
+    --settings-menu-button-clicked-background-color: #666;
+    --settings-menu-button-clicked-color: #ddd;
+    --comment-background-color: #161616;
+    --comment-border-color: #202020;
+    --comment-color: #808080;
+    --comment-adder-button-color: #808080;
+    --comment-remover-button-color: hsl(0, 90%, 35%);
+    --param-side-button-background-color: #202020;
+    --param-side-button-hover-background-color: #303030;
+    --param-side-button-active-background-color: #404040;
+    --gui-render-info-color: #FFFFFFD0;
+    --draggable-window-text-color: #d2d2d2;
+	--select-indicator-color: hsl(120, 75%, 30%);
+	--dropdown-background-color: rgb(150, 150, 150);
+	--dropdown-opener-border-color: rgb(95, 95, 95);
+	--dropdown-item-color: #000;
+	--dropdown-arrow-color: rgb(14, 14, 14);
+	--color-text-input-background-color: rgb(60, 60, 60);
+	--color-text-input-color: rgb(220, 220, 220);
+	--selectable-target-item-hover-color: rgb(85, 85, 85);
+	--selected-target-item-color: #f2f20d;
+	--target-quick-delete-button-color: #b00;
+    draggable-window {
+        --header-background-color: rgb(49, 49, 49);
+        --header-color: rgb(210, 210, 210);
+        --header-button-background-color: hsl(295, 46%, 72%);
+        --header-button-hover-background-color: hsl(297, 45%, 70%);
+        --header-button-active-background-color: hsl(295, 39%, 64%);
+        --header-button-color: rgb(255,255,255);
+        --header-button-border-color: hsl(220, 16%, 17%);
+        --content-background-color: rgb(33, 33, 33);
+        --shadow-color: #000;
+    }
+	color-spectrum, hue-slider {
+		--dot-border-color: rgb(220, 220, 220);
+	}
+    --update-button-highlight-color: #d295d8;
+    --trigger-action-hovered-color: #d295d860;
+    --trigger-action-selected-color: #d295d8a0;
+    --trigger-action-dragged-brightness: 0.6;
+    --tab-view-separator-color: rgb(97, 97, 97);
+    --tab-label-background-color: rgb(77, 77, 77);
+    --tab-label-hover-background-color: rgb(61, 61, 61);
+    --tab-label-select-background-color: rgb(45, 45, 45);
+    --tab-label-text-color: #fff;
+    --tab-label-info-color: #eee;
+    --params-table-cell-border-color: rgb(112, 112, 112);
+    --params-table-header-background-color: rgb(41, 41, 41);
+    --params-table-odd-row-background-color: rgb(75, 75, 75);
+    --params-table-even-row-background-color: rgb(58, 58, 58);
+    --params-table-row-hover-background-color: rgb(49, 49, 49);
+}
+
+.alei-crossfire-theme {
+    --settings-menu-label-background-color: #0a0b0c;
+    --settings-menu-label-color: #bbb;
+    --settings-menu-button-background-color: #0a0b0c;
+    --settings-menu-button-border-color: #333;
+    --settings-menu-button-color: #999;
+    --settings-menu-button-hover-background-color: #5ba35e40;
+    --settings-menu-button-hover-color: #ccc;
+    --settings-menu-button-clicked-background-color: #5ba35e;
+    --settings-menu-button-clicked-color: #ddd;
+    --comment-background-color: #0a0b0c;
+    --comment-border-color: #0a0b0c;
+    --comment-color: #808080;
+    --comment-adder-button-color: #808080;
+    --comment-remover-button-color: hsl(0, 90%, 35%);
+    --param-side-button-background-color: #202020;
+    --param-side-button-hover-background-color: #303030;
+    --param-side-button-active-background-color: #404040;
+    --gui-render-info-color: #FFFFFFD0;
+    --draggable-window-text-color: #d2d2d2;
+	--select-indicator-color: hsl(120, 75%, 30%);
+	--dropdown-background-color: rgb(150, 150, 150);
+	--dropdown-opener-border-color: rgb(95, 95, 95);
+	--dropdown-item-color: #000;
+	--dropdown-arrow-color: rgb(14, 14, 14);
+	--color-text-input-background-color: rgb(60, 60, 60);
+	--color-text-input-color: rgb(220, 220, 220);
+	--selectable-target-item-hover-color: rgb(85, 85, 85);
+	--selected-target-item-color: #f2f20d;
+	--target-quick-delete-button-color: #b00;
+    draggable-window {
+        --header-background-color: #262a2e;
+        --header-color: #FFFFFFD0;
+        --header-button-background-color: #5ba35e;
+        --header-button-hover-background-color: #48864a;
+        --header-button-active-background-color: #48864a80;
+        --header-button-color: rgb(255, 255, 255);
+        --header-button-border-color: #93FD98;
+        --content-background-color: #191c1f;
+        --shadow-color: #000;
+    }
+	color-spectrum, hue-slider {
+		--dot-border-color: rgb(220, 220, 220);
+	}
+    --update-button-highlight-color: #5ba35e;
+    --trigger-action-hovered-color: #5ba35e40;
+    --trigger-action-selected-color: #5ba35e80;
+    --trigger-action-dragged-brightness: 0.6;
+    --tab-view-separator-color: #40454b;
+    --tab-label-background-color: #40454b;
+    --tab-label-hover-background-color: #31353a;
+    --tab-label-select-background-color: #0f1113;
+    --tab-label-text-color: #fff;
+    --tab-label-info-color: #eee;
+    --params-table-cell-border-color: #262a2e;
+    --params-table-header-background-color: #262a2e;
+    --params-table-odd-row-background-color: #40454b;
+    --params-table-even-row-background-color: #31353a;
+    --params-table-row-hover-background-color: #262a2e;
 }

@@ -75,9 +75,61 @@ export const canvasThemes = {
         selectOutlineColor: "#FFFF00",
     }),
     4: createCanvasThemeMap({ // ALEI Black Theme
-        backgroundColor: "#222222",
-        gridColor: "#FFFFFF50",
-        selectOutlineColor: "#FFFF00",
+        backgroundColor: "#161616",
+        gridColor: "#FFFFFFA0",
+        selectOutlineColor: "#FFE554",
+        selectTextColor: "#FFE554",
+        objectColors: {
+            box: {col: "#FFF", edgeCol: "#FFF"},
+            door: {col: "#000", edgeCol: "#000", invisibleOpacityFactor: 0.05},
+            water: {
+                col: "#3592B9", edgeCol: "#91EAFF", opacityFactor: 0.24,
+                acidCol: "#BBFB59", acidEdgeCol: "#91EAFF", acidOpacityFactor: 0.81
+            },
+            pushf: {col: "#2BFF40", edgeCol: "#3CFF4F"},
+            region: {col: "#FFD52B", edgeCol: "#FFB03C", edgeOpacityFactor: 0.5, buttonOpacityFactor: 0.5},
+            bg: {col: "#000", edgeCol: "#910000", edgeOpacityFactor: 0.6, coloredOpacityFactor: 0.22}
+        },
+    }),
+    5: createCanvasThemeMap({ // ALEI Sage Theme
+        backgroundColor: "#161616",
+        gridColor: "#FFFFFFA0",
+        selectOutlineColor: "#FFE554",
+        selectTextColor: "#FFE554",
+        objectColors: {
+            box: {col: "#FFF", edgeCol: "#FFF"},
+            door: {col: "#000", edgeCol: "#000", invisibleOpacityFactor: 0.05},
+            water: {
+                col: "#3592B9", edgeCol: "#91EAFF", opacityFactor: 0.24,
+                acidCol: "#BBFB59", acidEdgeCol: "#91EAFF", acidOpacityFactor: 0.81
+            },
+            pushf: {col: "#2BFF40", edgeCol: "#3CFF4F"},
+            region: {col: "#FFD52B", edgeCol: "#FFB03C", edgeOpacityFactor: 0.5, buttonOpacityFactor: 0.5},
+            bg: {col: "#000", edgeCol: "#910000", edgeOpacityFactor: 0.6, coloredOpacityFactor: 0.22}
+        },
+    }),
+    6: createCanvasThemeMap({ // ALEI OEDA Theme
+        backgroundColor: "#161616",
+        gridColor: "#FFFFFFA0",
+        selectOutlineColor: "#FFE554",
+        selectTextColor: "#FFE554",
+        objectColors: {
+            box: {col: "#FFF", edgeCol: "#FFF"},
+            door: {col: "#000", edgeCol: "#000", invisibleOpacityFactor: 0.05},
+            water: {
+                col: "#3592B9", edgeCol: "#91EAFF", opacityFactor: 0.24,
+                acidCol: "#BBFB59", acidEdgeCol: "#91EAFF", acidOpacityFactor: 0.81
+            },
+            pushf: {col: "#2BFF40", edgeCol: "#3CFF4F"},
+            region: {col: "#FFD52B", edgeCol: "#FFB03C", edgeOpacityFactor: 0.5, buttonOpacityFactor: 0.5},
+            bg: {col: "#000", edgeCol:"#910000", edgeOpacityFactor: 0.6, coloredOpacityFactor: 0.22}
+        },
+    }),
+    7: createCanvasThemeMap({ // ALEI Crossfire Theme
+        backgroundColor: "#2A2F33",
+        gridColor: "#FFFFFFA0",
+        selectOutlineColor: "#FFE554",
+        selectTextColor: "#FFE554",
     }),
 };
 

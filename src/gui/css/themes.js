@@ -7,6 +7,9 @@ const themes = {
     2: "purple-theme",
     3: "green-theme",
     4: "alei-dark-theme",
+    5: "alei-sage-theme",
+    6: "alei-oeda-theme",
+    7: "alei-crossfire-theme",
 }
 
 export const themeNames = {
@@ -15,9 +18,12 @@ export const themeNames = {
     2: "Purple",
     3: "Green",
     4: "Black",
+    5: "Sage",
+    6: "OEDA",
+    7: "CF",
 };
 
-export const aleiThemesCount = 1;
+export const aleiThemesCount = 4;
 
 export function replaceThemeSet() {
     function AleiThemeSet(value) {

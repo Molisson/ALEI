@@ -447,75 +447,318 @@
 }
 
 .alei-dark-theme {
-    --topui-background-image: none; /*removes top ui detail*/
-    --leftui-background-image: none; /*removes left ui detail*/
-    --rightui-background-image: none; /*removes right ui detail*/
+    --c-color: #FFFFFF20;
+
+    --topui-background-image: none;
+    --leftui-background-image: none;
+    --rightui-background-image: none;
     --topui-background-color: #0A0A0A;
     --leftui-background-color: #0A0A0A;
     --rightui-background-color: #0A0A0A;
+
     --field_btn-background-color: #1E1E1E;
-    --tool_btn-background-color: #1E1E1E;
-    --tool_btn-border-color: transparent; /*setStyle(".tool_btn", "border", "");*/
-    --tool_btn2-background-color: #4566AB;
-    --tool_btn2-border-color: #FFFFFF20;
     --field_btn-color: #FFFFFFD0;
-    --tool_btn-color: #FFFFFFD0;
-    --tool_btn2-color: #FFFFFFD0;
-    --gui_sel_info-color: #FFFFFFD0;
-    --c-color: #FFFFFF20;
-    --pa1-color: #808080;
-    --pa2-color: #FFFFFFD0;
-    --field_dis_left-color: #FFFFFFD0;
-    --field_dis_right-color: #FFFFFFD0;
-    --p_u1-border-bottom-color: transparent; /*setStyle(".p_u1", "border", "");*/
-    --p_u2-border-bottom-color: transparent; /*setStyle(".p_u2", "border", "");*/
-    --pa1-background-color: #101010;
-    --pa2-background-color: #1B1B1B;
-    --objbox-background-color: #131313;
+    --field_btn-hover-background-color: #353535;
+    --field_btn-hover-color: #FFFFFFD0;
+    --field_btn-active-background-color: #151515;
+    --field_btn-active-color: #CCC;
+
     --field_dis_left-background-color: #1E1E1E;
+    --field_dis_left-color: #FFFFFFD0;
     --field_dis_right-background-color: #131313;
-    --selline1-background-color: #7A1314; /*selected object/current map*/
+    --field_dis_right-color: #FFFFFFD0;
+
+    --tool_btn-background-color: #1E1E1E;
+    --tool_btn-border-color: transparent;
+    --tool_btn-color: #FFFFFFD0;
     --tool_btn-hover-background-color: #5f8dd3;
     --tool_btn-hover-border-color: #FFFFFF20;
-    --tool_btn-hover-color: #FFFFFFD0;
+    --tool_btn-active-background-color: #151515;
+    --tool_btn-active-border-color: #FFFFFF20;
+    --tool_btn-active-color: #FFFFFFD0;
+    --tool_btn2-background-color: #4566AB;
+    --tool_btn2-border-color: #FFFFFF20;
+    --tool_btn2-color: #FFFFFFD0;
     --tool_btn2-hover-background-color: #5077C4;
     --tool_btn2-hover-border-color: #FFFFFF20;
     --tool_btn2-hover-color: #FFFFFFD0;
-    --field_btn-hover-background-color: #353535;
-    --field_btn-hover-color: #FFFFFFD0;
-    --tool_btn-active-background-color: #151515; /*object list hold fill*/
-    --tool_btn-active-border-color: #FFFFFF20; /*object list hold outline*/
-    --tool_btn-active-color: #FFFFFFD0; /*object list hold text*/
-    --tool_btn2-active-background-color: #39558C; /*toggled active button hold fill*/
-    --tool_btn2-active-border-color: #FFFFFF20; /*toggled active button hold outline*/
-    --tool_btn2-active-color: #FFFFFFD0; /*toggled active button hold text*/
-    --field_btn-active-background-color: #151515; /*field button hold fill*/
-    --field_btn-active-color: #CCC; /*field button hold text*/
-    --mrtitle-background-color: #1E1E1E; /*map list overhead*/
-    --mrbox-background-color: #0A0A0A; /*maplist border fill*/
-    --field_input-background-color: #131313; /*map id field*/
+    --tool_btn2-active-background-color: #39558C;
+    --tool_btn2-active-border-color: #FFFFFF20;
+    --tool_btn2-active-color: #FFFFFFD0;
+
+    --gui_sel_info-color: #FFFFFFD0;
+
+    --pa1-background-color: #101010;
+    --pa1-color: #FFFFFF66;
+    --pa2-background-color: #1B1B1B;
+    --pa2-color: #FFFFFFD0;
+    --pa2-hover-background-color: #5077C4;
+    --p_u1-border-bottom-color: transparent;
+    --p_u2-border-bottom-color: transparent;
+
+    --selline1-background-color: #7A1314;
+    --objbox-background-color: #131313;
+    
+    --mrtitle-background-color: #1E1E1E;
+    --mrbox-background-color: #0A0A0A;
+    --field_input-background-color: #131313;
     --field_input-color: #CCC;
-    --btn-background-color: #1E1E1E; /*map button*/
+    --btn-background-color: #1E1E1E;
     --btn-color: #CCC;
-    --btn-hover-background-color: #353535; /*map button hover*/
+    --btn-hover-background-color: #353535;
     --btn-hover-color: #CCC;
-    --btn-active-background-color: #151515; /*map button hold*/
+    --btn-active-background-color: #151515;
     --btn-active-color: #CCC;
-    --closebox-background-color: #353535; /*decor list close button*/
+
+    --closebox-background-color: #353535;
     --closebox-color: #CCC;
-    --list_group-background-color: #1E1E1E; /*decor list category*/
-    --list_group-border-bottom-color: transparent; /*setStyle(".list_group", "borderBottom", "");*/
-    --list_group-hover-background-color: #353535; /*decor list category hover*/
-    --list_group-active-background-color: #0A0A0A; /*decor list category hold*/
-    --image_list_collapsable-background-color: #0A0A0A; /*decor list background*/
-    --img_option_selected-background-color: #4566AB40; /*current decor*/
-    --rightui-border-left-color: transparent; /*setStyle(".rightui", "borderLeft", "");*/
-    --leftui-border-right-color: transparent; /*setStyle(".leftui", "borderRight", "");*/
+    --list_group-background-color: #1E1E1E;
+    --list_group-border-bottom-color: transparent;
+    --list_group-hover-background-color: #353535;
+    --list_group-active-background-color: #0A0A0A;
+    --image_list_collapsable-background-color: #0A0A0A;
+    --img_option_selected-background-color: #4566AB40;
+    --rightui-border-left-color: transparent;
+    --leftui-border-right-color: transparent;
     --webkit-scrollbar-thumb-color: #444;
     --scrollbar-color-thumb: #444;
     --scrollbar-color-track: rgba(0, 0, 0, 0.2);
-    /*setStyle("#rparams, #gui_objbox, #tools_box, #parambox", "scrollbarColor", "");*/
-    /*setStyle("#rparams, #gui_objbox, #tools_box, #parambox", "scrollbarWidth", "");*/
-    /*setStyle("#tools_box", "overflow-y", "hidden");
-    setStyle("#tools_box", "overflow-y", "auto");*/
+}
+
+.alei-sage-theme {
+    --c-color: #FFFFFF20;
+
+    --topui-background-image: none;
+    --leftui-background-image: none;
+    --rightui-background-image: none;
+    --topui-background-color: #0A0A0A;
+    --leftui-background-color: #0A0A0A;
+    --rightui-background-color: #0A0A0A;
+
+    --field_btn-background-color: #1E1E1E;
+    --field_btn-color: #FFFFFFD0;
+    --field_btn-hover-background-color: #353535;
+    --field_btn-hover-color: #FFFFFFD0;
+    --field_btn-active-background-color: #151515;
+    --field_btn-active-color: #CCC;
+
+    --field_dis_left-background-color: #1E1E1E;
+    --field_dis_left-color: #FFFFFFD0;
+    --field_dis_right-background-color: #131313;
+    --field_dis_right-color: #FFFFFFD0;
+
+    --tool_btn-background-color: #1E1E1E;
+    --tool_btn-border-color: transparent;
+    --tool_btn-color: #FFFFFFD0;
+    --tool_btn-hover-background-color: #77af68;
+    --tool_btn-hover-border-color: #FFFFFF20;
+    --tool_btn-hover-color: #FFFFFFD0;
+    --tool_btn-active-background-color: #151515;
+    --tool_btn-active-border-color: #FFFFFF20;
+    --tool_btn-active-color: #FFFFFFD0;
+    --tool_btn2-background-color: #517e45;
+    --tool_btn2-border-color: #FFFFFF20;
+    --tool_btn2-color: #FFFFFFD0;
+    --tool_btn2-hover-background-color: #5f9451;
+    --tool_btn2-hover-border-color: #FFFFFF20;
+    --tool_btn2-hover-color: #FFFFFFD0;
+    --tool_btn2-active-background-color: #3d6132;
+    --tool_btn2-active-border-color: #FFFFFF20;
+    --tool_btn2-active-color: #FFFFFFD0;
+
+    --gui_sel_info-color: #FFFFFFD0;
+
+    --pa1-background-color: #101010;
+    --pa1-color: #FFFFFF66;
+    --pa2-background-color: #1B1B1B;
+    --pa2-color: #FFFFFFD0;
+    --pa2-hover-background-color: #517e45;
+    --p_u1-border-bottom-color: transparent;
+    --p_u2-border-bottom-color: transparent;
+
+    --selline1-background-color: #5f9451;
+    --objbox-background-color: #131313;
+
+    --mrtitle-background-color: #1E1E1E;
+    --mrbox-background-color: #0A0A0A;
+    --field_input-background-color: #131313;
+    --field_input-color: #CCC;
+    --btn-background-color: #1E1E1E;
+    --btn-color: #CCC;
+    --btn-hover-background-color: #353535;
+    --btn-hover-color: #CCC;
+    --btn-active-background-color: #151515;
+    --btn-active-color: #CCC;
+
+    --closebox-background-color: #353535;
+    --closebox-color: #CCC;
+    --list_group-background-color: #1E1E1E;
+    --list_group-border-bottom-color: transparent;
+    --list_group-hover-background-color: #353535;
+    --list_group-active-background-color: #0A0A0A;
+    --image_list_collapsable-background-color: #0A0A0A;
+    --img_option_selected-background-color: #4566AB40;
+    --rightui-border-left-color: transparent;
+    --leftui-border-right-color: transparent;
+    --webkit-scrollbar-thumb-color: #444;
+    --scrollbar-color-thumb: #444;
+    --scrollbar-color-track: rgba(0, 0, 0, 0.2);
+}
+
+.alei-oeda-theme {
+    --c-color: #FFFFFF20;
+
+    --topui-background-image: none;
+    --leftui-background-image: none;
+    --rightui-background-image: none;
+    --topui-background-color: #0A0A0A;
+    --leftui-background-color: #0A0A0A;
+    --rightui-background-color: #0A0A0A;
+
+    --field_btn-background-color: #1E1E1E;
+    --field_btn-color: #FFFFFFD0;
+    --field_btn-hover-background-color: #353535;
+    --field_btn-hover-color: #FFFFFFD0;
+    --field_btn-active-background-color: #151515;
+    --field_btn-active-color: #CCC;
+
+    --field_dis_left-background-color: #1E1E1E;
+    --field_dis_left-color: #FFFFFFD0;
+    --field_dis_right-background-color: #131313;
+    --field_dis_right-color: #FFFFFFD0;
+
+    --tool_btn-background-color: #1E1E1E;
+    --tool_btn-border-color: transparent;
+    --tool_btn-color: #FFFFFFD0;
+    --tool_btn-hover-background-color: #dc9be2a0;
+    --tool_btn-hover-border-color: #FFFFFF60;
+    --tool_btn-active-background-color: #151515;
+    --tool_btn-active-border-color: #FFFFFF20;
+    --tool_btn-active-color: #FFFFFFD0;
+    --tool_btn2-background-color: #d295d8;
+    --tool_btn2-border-color: #FFFFFF20;
+    --tool_btn2-color: #FFFFFFD0;
+    --tool_btn2-hover-background-color: #e1aae6;
+    --tool_btn2-hover-border-color: #FFFFFFa0;
+    --tool_btn2-hover-color: #FFFFFFD0;
+    --tool_btn2-active-background-color: #dc9be2c0;
+    --tool_btn2-active-border-color: #FFFFFFc0;
+    --tool_btn2-active-color: #FFFFFFD0;
+
+    --gui_sel_info-color: #FFFFFFD0;
+
+    --pa1-background-color: #101010;
+    --pa1-color: #FFFFFF66;
+    --pa2-background-color: #1B1B1B;
+    --pa2-color: #FFFFFFD0;
+    --pa2-hover-background-color: #81b3d4;
+    --p_u1-border-bottom-color: transparent;
+    --p_u2-border-bottom-color: transparent;
+
+    --selline1-background-color: #81b3d4;
+    --objbox-background-color: #131313;
+    
+    --mrtitle-background-color: #1E1E1E;
+    --mrbox-background-color: #0A0A0A;
+    --field_input-background-color: #131313;
+    --field_input-color: #CCC;
+    --btn-background-color: #1E1E1E;
+    --btn-color: #CCC;
+    --btn-hover-background-color: #353535;
+    --btn-hover-color: #CCC;
+    --btn-active-background-color: #151515;
+    --btn-active-color: #CCC;
+
+    --closebox-background-color: #353535;
+    --closebox-color: #CCC;
+    --list_group-background-color: #1E1E1E;
+    --list_group-border-bottom-color: transparent;
+    --list_group-hover-background-color: #353535;
+    --list_group-active-background-color: #0A0A0A;
+    --image_list_collapsable-background-color: #0A0A0A;
+    --img_option_selected-background-color: #4566AB40;
+    --rightui-border-left-color: transparent;
+    --leftui-border-right-color: transparent;
+    --webkit-scrollbar-thumb-color: #444;
+    --scrollbar-color-thumb: #777;
+    --scrollbar-color-track: rgba(0, 0, 0, 0.2);
+}
+
+.alei-crossfire-theme {
+    --c-color: #262a2e;
+
+    --topui-background-image: none;
+    --leftui-background-image: none;
+    --rightui-background-image: none;
+    --topui-background-color: #0f1113;
+    --leftui-background-color: #191c1f;
+    --rightui-background-color: #191c1f;
+
+    --field_btn-background-color: #262a2e;
+    --field_btn-color: #FFFFFFD0;
+    --field_btn-hover-background-color: #373c41;
+    --field_btn-hover-color: #FFFFFFD0;
+    --field_btn-active-background-color: #0a0b0c;
+    --field_btn-active-color: #CCC;
+
+    --field_dis_left-background-color: #262a2e;
+    --field_dis_left-color: #FFFFFFD0;
+    --field_dis_right-background-color: #191c1f;
+    --field_dis_right-color: #FFFFFFD0;
+
+    --tool_btn-background-color: #0f1113;
+    --tool_btn-border-color: #93FD9840;
+    --tool_btn-color: #FFFFFFD0;
+    --tool_btn-hover-background-color: #5ba35e40;
+    --tool_btn-hover-border-color: #5ba35e60;
+    --tool_btn-hover-color: #FFFFFFD0;
+    --tool_btn-active-background-color: #0a0b0c;
+    --tool_btn-active-border-color: #93FD98;
+    --tool_btn-active-color: #FFFFFFD0;
+    --tool_btn2-background-color: #5ba35e;
+    --tool_btn2-border-color: #93FD98;
+    --tool_btn2-hover-background-color: #48864a;
+    --tool_btn2-hover-border-color: #adffb1;
+    --tool_btn2-hover-color: #FFFFFFD0;
+    --tool_btn2-active-background-color: #48864a80;
+    --tool_btn2-active-border-color: #93FD98;
+    --tool_btn2-active-color: #FFFFFFD0;
+    --tool_btn2-color: #FFFFFFD0;
+
+    --gui_sel_info-color: #FFFFFFD0;
+
+    --pa1-background-color: #0f1113;
+    --pa1-color: #FFFFFF90;
+    --pa2-background-color: #0a0b0c;
+    --pa2-color: #FFFFFFD0;
+    --p_u1-border-bottom-color: transparent;
+    --p_u2-border-bottom-color: transparent;
+
+    --selline1-background-color: #5ba35e;
+    --objbox-background-color: #0f1113;
+
+    --mrtitle-background-color: #0f1113;
+    --mrbox-background-color: #191c1f;
+    --field_input-background-color: #0a0b0c;
+    --field_input-color: #CCC;
+    --btn-background-color: #262a2e;
+    --btn-color: #CCC;
+    --btn-hover-background-color: #373c41;
+    --btn-hover-color: #CCC;
+    --btn-active-background-color: #0a0b0c;
+    --btn-active-color: #CCC;
+    
+    --closebox-background-color: #262a2e;
+    --closebox-color: #CCC;
+    --list_group-background-color: #262a2e;
+    --list_group-border-bottom-color: transparent;
+    --list_group-hover-background-color: #373c41;
+    --list_group-active-background-color: #0a0b0c;
+    --image_list_collapsable-background-color: #0a0b0c;
+    --img_option_selected-background-color: #93FD9840;
+    --rightui-border-left-color: transparent;
+    --leftui-border-right-color: transparent;
+    --webkit-scrollbar-thumb-color: #FFFFFFD0;
+    --scrollbar-color-thumb: #FFFFFFD0;
+    --scrollbar-color-track: rgba(0, 0, 0, 0.2);
 }
