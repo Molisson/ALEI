@@ -28,6 +28,8 @@ import { readStorage, writeStorage } from "./storage/storageutils.js";
 
 import { patchForInteractableTriggerActions } from "./triggeractions/interactability.js";
 
+import * as wallTextures from "./wall-textures/wall-textures.js";
+
 import { parse as alescriptParse } from "./alescript.js";
 import { activateHTML5Mode, html5ModeActive, aleiExtendedTriggerActionLimit } from "./html5mode.js";
 import { aleiLog, logLevel, ANSI_RESET, ANSI_YELLOW } from "./log.js";
@@ -2343,6 +2345,7 @@ function patch_m_move() {
                                         es[i].pm.x += x1;
                                         es[i].pm.y += y1;
                                         if (aleiSettings.renderSpawnAreas && spawnAreas.classes.has(es[i]._class)) spawnAreas.scheduleUpdate();
+                                        if (es[i]._class === "box") wallTextures.setDirty(); 
                                     }
                     m_drag_wx += x1;
                     m_drag_wy += y1;
@@ -2376,6 +2379,7 @@ function patch_m_move() {
                                             es[i].fixPos();
 
                                             if (aleiSettings.renderSpawnAreas && spawnAreas.classes.has(es[i]._class)) spawnAreas.scheduleUpdate();
+                                            if (es[i]._class === "box") wallTextures.setDirty(); 
                                         }
                     m_drag_wx += x1;
                     m_drag_wy += y1;
@@ -2634,6 +2638,7 @@ function handleServerRequestResponse(request, operation, response) {
         loadParameterMap();
         if (aleiSettings.ocmEnabled) loadOCM();
         if (aleiSettings.renderSpawnAreas) spawnAreas.scheduleUpdate();
+        wallTextures.setDirty();
     }else if (response.indexOf("knownmaps = [") !== -1) {
         window.knownmaps = [];
         for (let map of response.match(/"(.*?)"/g)) {

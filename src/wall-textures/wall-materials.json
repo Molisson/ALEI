@@ -1,0 +1,437 @@
+{
+    "example": {
+        "name": "Example material data with comments",
+        "sprites": {
+            "_comment": "top and bottom are both optional",
+            "top": {
+                "mid": {
+                    "sprite": "string | some texture key",
+                    "offsetX": "number? | 0 by default if omitted",
+                    "offsetY": "number? | 0 by default if omitted",
+                    "widthAdjustment": "number? | 0 by default if omitted"
+                },
+                "left": {
+                    "sprite": "string",
+                    "offsetX": "number?",
+                    "offsetY": "number?",
+                    "requiresCorner": "boolean? | determines if the part is only rendered when the part is in a corner, true by default"
+                },
+                "right": {
+                    "sprite": "string",
+                    "offsetX": "number?",
+                    "offsetY": "number?",
+                    "requiresCorner": "boolean?"
+                }
+            },
+            "bottom": {
+                "left": {
+                    "sprite": "string",
+                    "offsetX": "number?",
+                    "offsetY": "number?",
+                    "requiresCorner": "boolean?"
+                },
+                "mid": {
+                    "sprite": "string",
+                    "offsetX": "number?",
+                    "offsetY": "number?",
+                    "widthAdjustment": "number?"
+                },
+                "right": {
+                    "sprite": "string",
+                    "offsetX": "number?",
+                    "offsetY": "number?",
+                    "requiresCorner": "boolean?"
+                }
+            }
+        }
+    },
+    "0": {
+        "name": "Concrete",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/concrete_top"
+                },
+                "left": {
+                    "sprite": "walls/concrete_top_left"
+                },
+                "right": {
+                    "sprite": "walls/concrete_top_right"
+                }
+            },
+            "bottom": {
+                "mid": {
+                    "sprite": "walls/concrete_bottom"
+                },
+                "left": {
+                    "sprite": "walls/concrete_bottom_left"
+                },
+                "right": {
+                    "sprite": "walls/concrete_bottom_right"
+                }
+            }
+        }
+    },
+    "1": {
+        "name": "Grass",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/grass",
+                    "offsetX": 28,
+                    "offsetY": -23,
+                    "widthAdjustment": -56
+                },
+                "left": {
+                    "sprite": "walls/grass_left",
+                    "offsetY": -23,
+                    "requiresCorner": false
+                },
+                "right": {
+                    "sprite": "walls/grass_right",
+                    "offsetX": 16,
+                    "offsetY": -23,
+                    "requiresCorner": false
+                }
+            }
+        }
+    },
+    "2": {
+        "name": "Sand",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/sand",
+                    "offsetY": -6
+                }
+            }
+        }
+    },
+    "3": {
+        "name": "Brown concrete",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/brown_concrete_top"
+                },
+                "left": {
+                    "sprite": "walls/concrete_top_left"
+                },
+                "right": {
+                    "sprite": "walls/concrete_top_right"
+                }
+            },
+            "bottom": {
+                "mid": {
+                    "sprite": "walls/brown_concrete_bottom"
+                },
+                "left": {
+                    "sprite": "walls/concrete_bottom_left"
+                },
+                "right": {
+                    "sprite": "walls/concrete_bottom_right"
+                }
+            }
+        }
+    },
+    "4": {
+        "name": "Dark plate",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/dark_plate_top"
+                }
+            },
+            "bottom": {
+                "mid": {
+                    "sprite": "walls/dark_plate_bottom"
+                }
+            }
+        }
+    },
+    "5": {
+        "name": "Dry grass",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/dry_grass",
+                    "offsetX": 28,
+                    "offsetY": -23,
+                    "widthAdjustment": -56
+                },
+                "left": {
+                    "sprite": "walls/dry_grass_left",
+                    "offsetY": -23,
+                    "requiresCorner": false
+                },
+                "right": {
+                    "sprite": "walls/dry_grass_right",
+                    "offsetX": 16,
+                    "offsetY": -23,
+                    "requiresCorner": false
+                }
+            }
+        }
+    },
+    "6": {
+        "name": "Dark grass",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/dark_grass",
+                    "offsetX": 28,
+                    "offsetY": -23,
+                    "widthAdjustment": -56
+                },
+                "left": {
+                    "sprite": "walls/dark_grass_left",
+                    "offsetY": -23,
+                    "requiresCorner": false
+                },
+                "right": {
+                    "sprite": "walls/dark_grass_right",
+                    "offsetX": 16,
+                    "offsetY": -23,
+                    "requiresCorner": false
+                }
+            }
+        }
+    },
+    "7": {
+        "name": "Clean dark plate",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/clean_dark_plate_top"
+                }
+            },
+            "bottom": {
+                "mid": {
+                    "sprite": "walls/clean_dark_plate_bottom"
+                }
+            }
+        }
+    },
+    "8": {
+        "name": "Bright plate",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/bright_plate_top"
+                }
+            },
+            "bottom": {
+                "mid": {
+                    "sprite": "walls/bright_plate_bottom"
+                }
+            }
+        }
+    },
+    "9": {
+        "name": "Clean bright plate",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/clean_bright_plate_top"
+                }
+            },
+            "bottom": {
+                "mid": {
+                    "sprite": "walls/clean_bright_plate_bottom"
+                }
+            }
+        }
+    },
+    "10": {
+        "name": "Usurpation plate",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/usurpation_plate_top"
+                },
+                "left": {
+                    "sprite": "walls/usurpation_plate_top_left"
+                },
+                "right": {
+                    "sprite": "walls/usurpation_plate_top_right"
+                }
+            },
+            "bottom": {
+                "mid": {
+                    "sprite": "walls/usurpation_plate_bottom"
+                },
+                "left": {
+                    "sprite": "walls/usurpation_plate_bottom_left"
+                },
+                "right": {
+                    "sprite": "walls/usurpation_plate_bottom_right"
+                }
+            }
+        }
+    },
+    "11": {
+        "name": "Stripes",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/stripes"
+                },
+                "left": {
+                    "sprite": "walls/stripes_top_left"
+                },
+                "right": {
+                    "sprite": "walls/stripes_top_right"
+                }
+            },
+            "bottom": {
+                "mid": {
+                    "sprite": "walls/stripes"
+                },
+                "left": {
+                    "sprite": "walls/stripes_bottom_left"
+                },
+                "right": {
+                    "sprite": "walls/stripes_bottom_right"
+                }
+            }
+        }
+    },
+    "12": {
+        "name": "Asphalt",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/asphalt"
+                }
+            }
+        }
+    },
+    "13": {
+        "name": "White concrete",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/white_concrete_top"
+                },
+                "left": {
+                    "sprite": "walls/white_concrete_top_left"
+                },
+                "right": {
+                    "sprite": "walls/white_concrete_top_right"
+                }
+            },
+            "bottom": {
+                "mid": {
+                    "sprite": "walls/white_concrete_bottom"
+                },
+                "left": {
+                    "sprite": "walls/white_concrete_bottom_left"
+                },
+                "right": {
+                    "sprite": "walls/white_concrete_bottom_right"
+                }
+            }
+        }
+    },
+    "14": {
+        "name": "PB:FTTP-like concrete",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/pbfttp_concrete"
+                },
+                "left": {
+                    "sprite": "walls/pbfttp_concrete_left"
+                },
+                "right": {
+                    "sprite": "walls/pbfttp_concrete_right"
+                }
+            }
+        }
+    },
+    "15": {
+        "name": "Wet sand",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/wet_sand",
+                    "offsetY": -6
+                }
+            }
+        }
+    },
+    "16": {
+        "name": "Mud",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/mud",
+                    "offsetY": -6
+                }
+            }
+        }
+    },
+    "17": {
+        "name": "Usurpation tiles",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/usurpation_tiles_top"
+                }
+            },
+            "bottom": {
+                "mid": {
+                    "sprite": "walls/usurpation_tiles_bottom"
+                }
+            }
+        }
+    },
+    "18": {
+        "name": "Stone bricks",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/stone_bricks"
+                },
+                "left": {
+                    "sprite": "walls/concrete_top_left"
+                },
+                "right": {
+                    "sprite": "walls/concrete_top_right"
+                }
+            },
+            "bottom": {
+                "mid": {
+                    "sprite": "walls/concrete_bottom"
+                },
+                "left": {
+                    "sprite": "walls/concrete_bottom_left"
+                },
+                "right": {
+                    "sprite": "walls/concrete_bottom_right"
+                }
+            }
+        }
+    },
+    "19": {
+        "name": "Wood",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/wood"
+                }
+            }
+        }
+    },
+    "20": {
+        "name": "Rocks",
+        "sprites": {
+            "top": {
+                "mid": {
+                    "sprite": "walls/rocks",
+                    "offsetY": -6
+                }
+            }
+        }
+    }
+}

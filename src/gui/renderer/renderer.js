@@ -5,6 +5,7 @@ import { asRadians, mod, easeOutExpo } from "../../math.js"
 import { fixedVisualBBoxes } from "./fixedbboxes.js";
 import { canvasThemes, setHighLightedObjEdgeColors } from "./canvasthemes.js";
 import * as spawnAreas from "../../spawn-areas.js";
+import * as wallTextures from "../../wall-textures/wall-textures.js";
 import { getCustomCharImage } from "../../skin-preview.js";
 
 let window = unsafeWindow;
@@ -159,45 +160,10 @@ function RenderSingleResizableObject(element, cns) {
     }
 
     if(window.SHOW_TEXTURES) {
-        if((elemClass == "box") && !(aleiSettings.boxRendering)) {
+        if(elemClass == "box") {
             color = "#000";
             opacityFactor = 1;
             edgeColor = "#333";
-        }
-        else if((elemClass == "box") && (aleiSettings.boxRendering)) {
-            let image = boxModelImages[pm.m];
-            if(image == undefined) {
-                image = new Image();
-                boxModelImages[pm.m] = image;
-
-                image.src = `pic.php?c=3&m=${pm.m}`;
-                image.width = 16;
-                image.height = 16;
-            }
-            if(image.pattern == undefined) image.pattern = ctx.createPattern(image, "repeat-x"); // Create repeat pattern if not already done.
-            ctx.globalAlpha = 1;
-
-
-            ctx.save();
-            // Getting a working rectangle for us in order to work.
-            ctx.beginPath();
-            ctx.rect(x, y, w, h);
-            ctx.closePath();
-            ctx.clip();
-
-            // Ensuring that background is offsetted properly and takes all the rectangle.
-            ctx.translate(w2s_x(0), w2s_y(0));
-            ctx.scale(w2s_x(1) - w2s_x(0), w2s_y(1) - w2s_y(0));
-
-            // Actual background rendering.
-            ctx.beginPath();
-            ctx.fillStyle = image.pattern;
-            ctx.rect(s2w_x(0), s2w_y(0), s2w_w(canvasWidth), s2w_h(canvasHeight));
-            ctx.fill();
-
-            ctx.restore();
-
-
         }
         else if ((elemClass == "bg") && (window.CACHED_BGS[pm.m] !== undefined) && (window.CACHED_BGS[pm.m].loaded)) {
             if(backgroundRequestsOnProgress.indexOf(pm.m) !== -1) {
@@ -251,7 +217,7 @@ function RenderSingleResizableObject(element, cns) {
         edgeOpacityFactor = currentTheme.selectEdgeOpacityFactor;
     }
 
-    if(!( (window.SHOW_TEXTURES) && ( (elemClass == "bg") || ((elemClass == "box") && aleiSettings.boxRendering) ) )) _DrawRectangle(color, layerAlpha * opacityFactor, x, y, w, h, false); // Object itself.
+    if(!( (window.SHOW_TEXTURES) && (elemClass == "bg") )) _DrawRectangle(color, layerAlpha * opacityFactor, x, y, w, h, false); // Object itself.
     if(!window.SHOW_TEXTURES) _DrawRectangle(edgeColor, layerAlpha * edgeOpacityFactor, x, y, w, h, true); // Edge.
 }
 
@@ -932,6 +898,9 @@ function RenderFrame() {
     RenderBackground();
     RenderGrid();
     RenderAllObjects();
+    if (window.SHOW_TEXTURES && aleiSettings.boxRendering) {
+        wallTextures.drawWallTextures(ctx);
+    }
     RenderSelectionBox();
     RenderCrossCursor();
     if (aleiSettings.renderSpawnAreas) {

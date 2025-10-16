@@ -2,6 +2,7 @@ import { addEntitiesToUIDMap } from "./uidmap.js";
 import { addEntitiesToParameterMap } from "./parametermap.js";
 import { ocmHandleEntitiesCreation } from "../ocm/ocm.js";
 import { aleiSettings } from "../storage/settings.js";
+import * as wallTextures from "../wall-textures/wall-textures.js";
 import { aleiLog, logLevel } from "../log.js";
 import * as spawnAreas from "../spawn-areas.js";
 import { html5ModeActive } from "../html5mode.js";
@@ -11,6 +12,7 @@ export function onEntitiesCreated(newEntities) {
     addEntitiesToParameterMap(newEntities);
     if (aleiSettings.ocmEnabled) ocmHandleEntitiesCreation(newEntities);
     if (aleiSettings.renderSpawnAreas && newEntities.some(entity => spawnAreas.classes.has(entity._class))) spawnAreas.scheduleUpdate();
+    if (newEntities.some(e => e._class === "box")) wallTextures.setDirty(); 
 }
 
 export let SelectedObjects = [];
@@ -42,6 +44,7 @@ export function patchEntityClass() {
             return function() {
                 old.call(this);
                 if (spawnAreas.classes.has(this._class)) spawnAreas.scheduleUpdate();
+                if (this._class === "box") wallTextures.setDirty(); 
             }
         })(result.fixWidths);
 
@@ -67,6 +70,7 @@ export function patchEntityClass() {
                         if (aleiSettings.renderSpawnAreas && spawnAreas.classes.has(target._class)) {
                             spawnAreas.scheduleUpdate();
                         }
+                        if (target._class === "box") wallTextures.setDirty(); 
                     }
                 }
 

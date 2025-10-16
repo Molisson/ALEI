@@ -3,6 +3,7 @@ import { writeStorage } from "../storage/storageutils.js";
 import { aleiLog, logLevel } from "../log.js";
 import { loadOCM, clearOCM } from "../ocm/ocm.js";
 import * as spawnAreas from "../spawn-areas.js";
+import * as wallTextures from "../wall-textures/wall-textures.js";
 
 let settingsMenu;
 let settingButtonsPerKey;
@@ -180,6 +181,7 @@ export function createALEISettingsMenu() {
         },
         showSameParameters: () => { need_GUIParams_update = true; },
         renderSpawnAreas: (value) => { if (value) spawnAreas.scheduleUpdate(); },
+        boxRendering: (value) => { if (value) wallTextures.setDirty(); },
     }
 
     function settingValueSelected(settingKey, storageKey, value, callback) {

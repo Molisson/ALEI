@@ -4,6 +4,7 @@ import { getParameterValueParts, replaceParamValueUID, _encodeXMLChars } from ".
 import { ocmHandleEntityUIDChange, ocmHandleEntityParametersChange } from "../ocm/ocm.js";
 import { updateUIDMap } from "./uidmap.js";
 import { parameterMap, updateParameterMap } from "./parametermap.js";
+import * as wallTextures from "../wall-textures/wall-textures.js";
 import * as spawnAreas from "../spawn-areas.js";
 import { aleiExtendedTriggerActionLimit, html5ModeActive } from "../html5mode.js";
 
@@ -272,6 +273,12 @@ function setPhysicalParam(entityIndex, paramname, newValue) {
                 if (aleiSettings.renderSpawnAreas) spawnAreas.scheduleUpdate();
                 undoEvalString += `if (aleiSettings.renderSpawnAreas) scheduleSpawnAreasUpdate();`;
                 redoEvalString += `if (aleiSettings.renderSpawnAreas) scheduleSpawnAreasUpdate();`;
+            }
+
+            if (wallTextures.params.has(paramname)) {
+                wallTextures.setDirty();
+                undoEvalString += `wallTexturesSetDirty();`;
+                redoEvalString += `wallTexturesSetDirty();`;
             }
         }
     }
