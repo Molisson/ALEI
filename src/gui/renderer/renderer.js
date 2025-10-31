@@ -5,7 +5,7 @@ import { asRadians, mod, easeOutExpo } from "../../math.js"
 import { fixedVisualBBoxes } from "./fixedbboxes.js";
 import { canvasThemes, setHighLightedObjEdgeColors } from "./canvasthemes.js";
 import * as spawnAreas from "../../spawn-areas.js";
-import * as wallTextures from "../../wall-textures/wall-textures.js";
+import * as wallTextures from "../../wall-textures/wall-tx-renderer.js";
 import { getCustomCharImage } from "../../skin-preview.js";
 
 let window = unsafeWindow;
@@ -219,6 +219,13 @@ function RenderSingleResizableObject(element, cns) {
 
     if(!( (window.SHOW_TEXTURES) && (elemClass == "bg") )) _DrawRectangle(color, layerAlpha * opacityFactor, x, y, w, h, false); // Object itself.
     if(!window.SHOW_TEXTURES) _DrawRectangle(edgeColor, layerAlpha * edgeOpacityFactor, x, y, w, h, true); // Edge.
+
+    if (window.SHOW_TEXTURES && elemClass === "box" && aleiSettings.boxRendering) {
+        const prevAlpha = ctx.globalAlpha;
+        ctx.globalAlpha = layerAlpha;
+        wallTextures.drawWallTextures(ctx, element);
+        ctx.globalAlpha = prevAlpha;
+    }
 }
 
 // Function responsible for drawing edges of non-resizable objects. To be used below.
@@ -898,9 +905,6 @@ function RenderFrame() {
     RenderBackground();
     RenderGrid();
     RenderAllObjects();
-    if (window.SHOW_TEXTURES && aleiSettings.boxRendering) {
-        wallTextures.drawWallTextures(ctx);
-    }
     RenderSelectionBox();
     RenderCrossCursor();
     if (aleiSettings.renderSpawnAreas) {

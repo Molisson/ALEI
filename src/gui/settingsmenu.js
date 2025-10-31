@@ -3,7 +3,7 @@ import { writeStorage } from "../storage/storageutils.js";
 import { aleiLog, logLevel } from "../log.js";
 import { loadOCM, clearOCM } from "../ocm/ocm.js";
 import * as spawnAreas from "../spawn-areas.js";
-import * as wallTextures from "../wall-textures/wall-textures.js";
+import * as wallTxCache from "../wall-textures/cache.js";
 
 let settingsMenu;
 let settingButtonsPerKey;
@@ -94,7 +94,7 @@ export function createALEISettingsMenu() {
                 <button class="settings-button" data-value="false">No</button>
             </div>
             <div class="settings-item" data-key="boxRendering">
-                <div class="settings-label" title="Render preview for floors and ceilings (custom renderer setting). Work-in-progress.">[R] Preview walls:</div>
+                <div class="settings-label" title="Render textures for floors and ceilings (custom renderer setting). May cause lag when changing walls.">[R] Preview walls:</div>
                 <button class="settings-button" data-value="true">Yes</button>
                 <button class="settings-button" data-value="false">No</button>
             </div>
@@ -181,7 +181,7 @@ export function createALEISettingsMenu() {
         },
         showSameParameters: () => { need_GUIParams_update = true; },
         renderSpawnAreas: (value) => { if (value) spawnAreas.scheduleUpdate(); },
-        boxRendering: (value) => { if (value) wallTextures.setDirty(); },
+        boxRendering: (value) => { if (value) wallTxCache.setDirty("segments", "*"); },
     }
 
     function settingValueSelected(settingKey, storageKey, value, callback) {

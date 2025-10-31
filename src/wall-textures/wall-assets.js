@@ -1,5 +1,5 @@
 import wallMaterialsJSON from "./wall-materials.json";
-import { setDirty } from "./wall-textures.js";
+import * as wallTxCache from "./cache.js";
 
 export const wallMaterials = Object.fromEntries(
     Object.entries(wallMaterialsJSON).filter(([key, _]) => key !== "example")
@@ -16,7 +16,7 @@ export function getWallTextureImage(key) {
         image.loaded = false;
         image.onload = () => {
             image.loaded = true;
-            setDirty();
+            wallTxCache.setDirty("sprites", "*");
         };
         wallTextureAssets[key] = image;
     }

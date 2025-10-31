@@ -4,7 +4,7 @@ import { getParameterValueParts, replaceParamValueUID, _encodeXMLChars } from ".
 import { ocmHandleEntityUIDChange, ocmHandleEntityParametersChange } from "../ocm/ocm.js";
 import { updateUIDMap } from "./uidmap.js";
 import { parameterMap, updateParameterMap } from "./parametermap.js";
-import * as wallTextures from "../wall-textures/wall-textures.js";
+import * as wallTxCache from "../wall-textures/cache.js";
 import * as spawnAreas from "../spawn-areas.js";
 import { aleiExtendedTriggerActionLimit, html5ModeActive } from "../html5mode.js";
 
@@ -275,10 +275,15 @@ function setPhysicalParam(entityIndex, paramname, newValue) {
                 redoEvalString += `if (aleiSettings.renderSpawnAreas) scheduleSpawnAreasUpdate();`;
             }
 
-            if (wallTextures.params.has(paramname)) {
-                wallTextures.setDirty();
-                undoEvalString += `wallTexturesSetDirty();`;
-                redoEvalString += `wallTexturesSetDirty();`;
+            if (wallTxCache.watchedParams("segments").has(paramname)) {
+                wallTxCache.setDirty("segments", [es[entityIndex]]);
+                undoEvalString += `setWallTexturesCacheDirty("segments", [es[${entityIndex}]])`;
+                redoEvalString += `setWallTexturesCacheDirty("segments", [es[${entityIndex}]])`;
+            }
+            if (wallTxCache.watchedParams("sprites").has(paramname)) {
+                wallTxCache.setDirty("sprites", [es[entityIndex]]);
+                undoEvalString += `setWallTexturesCacheDirty("sprites", [es[${entityIndex}]])`;
+                redoEvalString += `setWallTexturesCacheDirty("sprites", [es[${entityIndex}]])`;
             }
         }
     }
