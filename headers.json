@@ -1,6 +1,6 @@
 {
     "name": "ALE Improvements",
-    "version": "27.4",
+    "version": "27.5",
     "description": "Changes to make ALE better.",
     "author": "molis, mici1234, wanted2001, gcp5o",
     "match": ["*://www.plazmaburst2.com/level_editor/map_edit.php*", "*://plazmaburst2.com/level_editor/map_edit.php*"],
