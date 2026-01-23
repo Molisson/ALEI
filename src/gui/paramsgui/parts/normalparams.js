@@ -166,24 +166,18 @@ function getButtonsHTML(selection) {
         else if (selection[0]._class == "decor") {
             return getImageSize_button + centerDecorationX_button + centerDecorationY_button;
         }
-        /*
-        // Was used, but due to 100 trigger actions, things have changed.
         else if (selection[0]._class == "trigger") {
             if (unsafeWindow.ExtendedTriggersLoaded) {
-                return editTriggersAsText_button + extendTrigger_buttons;
-            }
-            else {
-                return editTriggersAsText_button;
+                return extendTrigger_buttons;
             }
         }
-        */
     }
     return "";
 }
 
 function addEditTriggersAsTextButton(rparams) {
     // Simple, but broad fix.
-    const html = unsafeWindow.ExtendedTriggersLoaded ? editTriggersAsText_button + extendTrigger_buttons : editTriggersAsText_button;
+    const html = editTriggersAsText_button;
 
     rparams.insertAdjacentHTML("afterend", html);
 };

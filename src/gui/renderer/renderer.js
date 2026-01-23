@@ -58,6 +58,44 @@ let currentTheme;
 
 let regionImages = {} // Will be filled later.
 
+function ReplaceCanvas() {
+    const canvas_o0 = document.getElementById("O0");
+
+    if (!canvas_o0) {
+        aleiLog(logLevel.WARN, "[ALEI Renderer]: Unable to replace canvas element for performance improvements, falling back to main canvas element created in the level editor page.");
+        return;
+    };
+
+    const _new_canvas = document.createElement("canvas");
+    const _offscreen_canvas = _new_canvas.transferControlToOffscreen(); // Performance boost
+    const _offscreen_ctx = _offscreen_canvas.getContext("2d");
+
+    _new_canvas.id = "O0";
+    _new_canvas.style.cssText = "cursor:default;vertical-align:top";
+    _new_canvas.tabIndex = 2;
+
+    // Inherit the events from previous canvas element.
+    _new_canvas.onblur = canvas_o0.onblur;
+    _new_canvas.addEventListener("DOMMouseScroll", canvas_o0.onmousewheel);
+    _new_canvas.onmousemove = canvas_o0.onmousemove;
+    _new_canvas.onmouseout = canvas_o0.onmouseout;
+    _new_canvas.onmouseover = canvas_o0.onmouseover;
+    _new_canvas.onmousedown = canvas_o0.onmousedown;
+    _new_canvas.onmouseup = canvas_o0.onmouseup;
+    _new_canvas.onmousewheel = canvas_o0.onmousewheel;
+    _new_canvas.onselectstart = canvas_o0.onselectstart;
+    _new_canvas.ontouchstart = canvas_o0.ontouchstart;
+
+    ctx = _offscreen_ctx;
+    window.ctx = _offscreen_ctx;
+    window.canv = _new_canvas;
+
+    canvas_o0.removeEventListener("DOMMouseScroll", canvas_o0.onmousewheel);
+    canvas_o0.replaceWith(_new_canvas);
+
+    window.resize(); // Resize or otherwise we won't see the new canvas properly.
+};
+
 function RenderGrid() {
     // Grid lines.
     if(gridOpacity <= 0) return;
@@ -1037,6 +1075,7 @@ function PreviewModeUpdateVariables(val) {
 }
 
 export function Renderer_initialize() {
+    ReplaceCanvas();
     ctx = window.ctx;
 
     // Draw functions.
