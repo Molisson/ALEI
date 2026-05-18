@@ -33,6 +33,7 @@ import * as wallTxCache from "./wall-textures/cache.js";
 import { parse as alescriptParse } from "./alescript.js";
 import { activateHTML5Mode, html5ModeActive, aleiExtendedTriggerActionLimit } from "./html5mode.js";
 import { aleiLog, logLevel, ANSI_RESET, ANSI_YELLOW } from "./log.js";
+import * as pbAuth from "./pb-auth.js";
 import { checkForUpdates } from "./updates.js";
 
 import { getCustomCharImage } from "./skin-preview.js";
@@ -3455,6 +3456,8 @@ let ALE_start = (async function() {
     alreadyStarted = true;
     'use strict';
 
+    if (pbAuth.isAuthFail()) return pbAuth.notLoggedIn();
+
     VAL_TABLE = special_values_table;
     ROOT_ELEMENT = document.documentElement;
     stylesheets = document.styleSheets;
@@ -3615,7 +3618,7 @@ let ALE_start = (async function() {
     }
 });
 
-if(isNative) document.addEventListener("DOMContentLoaded", () => ALE_start());
+if(isNative && document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => ALE_start());
 else ALE_start();
 
 console.log("ALEI!");
