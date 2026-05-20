@@ -515,8 +515,8 @@ const allChars = [
     { id: 216, name: "Red Phantom (from 'kiriakos gr96-phantom') (Flash-only)", added: true }, // added by ALEI
     { id: 217, name: "Misfit (Flash-only)", added: true }, // added by ALEI
     { id: 218, name: "Kaibil (Flash-only)", added: true }, // added by ALEI
-    { id: 219, name: "? (Flash-only)", added: true }, // added by ALEI
-    { id: 220, name: "? (Flash-only)", added: true }, // added by ALEI
+    { id: 219, name: "Mujahideen (Flash-only)", added: true }, // added by ALEI
+    { id: 220, name: "Wizard Excalibur (Flash-only)", added: true }, // added by ALEI
 ];
 
 /**
