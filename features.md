@@ -57,6 +57,7 @@ This part includes changes to adds new things to ALE.
 - Improved "find errors" button
 - Rendering of valid DM/TDM spawn areas
 - Rendering of wall textures
+- Background cut
 
 # Fixes
 This part includes changes that are meant to fix issues (It doesn't have to be code issue, it can be any issue, ambiguity issues, etc.)
