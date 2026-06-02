@@ -137,6 +137,7 @@ function getAdditionalParamsHTML(paramsToDisplay) {
 
 const editTriggersAsText_button = '<a class="tool_btn tool_wid" style="width:100%;display:block;" onclick="edit_triggers_as_text=true;UpdateGUIParams()">Edit triggers as text</a>';
 const getImageSize_button = '<a onclick="getImageSize();" class="tool_btn tool_wid" style="display: block; width: 100%; margin-top: 4px;">Get image size</a>';
+const cutAreaEntity_button = '<a onclick="cutAreaEntity();" class="tool_btn tool_wid" style="display: block; width: 100%; margin-top: 4px;">Cut along line</a>';
 const centerDecorationX_button = '<a onclick="centerImageX();" class="tool_btn tool_wid" style="display: block; width: 100%; margin-top: 4px;">Center decoration X</a>';
 const centerDecorationY_button = '<a onclick="centerImageY();" class="tool_btn tool_wid" style="display: block; width: 100%; margin-top: 4px;">Center decoration Y</a>';
 const extendTrigger_buttons = `
@@ -160,19 +161,36 @@ const extendTrigger_buttons = `
 
 function getButtonsHTML(selection) {
     if (selection.length === 1) {
-        if (selection[0]._class == "bg") {
-            return getImageSize_button;
+        const _class = selection[0]._class;
+        if (_class === "bg") {
+            return getImageSize_button + cutAreaEntity_button;
         }
-        else if (selection[0]._class == "decor") {
+        else if (_class === "decor") {
             return getImageSize_button + centerDecorationX_button + centerDecorationY_button;
         }
-        else if (selection[0]._class == "trigger") {
+        else if (_class === "trigger") {
             if (unsafeWindow.ExtendedTriggersLoaded) {
                 return extendTrigger_buttons;
             }
         }
     }
-    return "";
+
+    // cutAreaEntity_button should be shown if:
+    // - all in selection have _class bg
+    // - or all in selection have _class bg except two which have _isresizable false instead
+    let showCutAreaButton;
+    {
+        // find non bgs
+        let nonBgs = new Array(3);
+        let n = 0;
+        for (let e of selection) {
+            if (e._class !== "bg") nonBgs[n++] = e;
+            if (n > 2) break;
+        }
+        showCutAreaButton = n === 0 || (n === 2 && nonBgs.every(e => !e._isresizable));
+    }
+    
+    return showCutAreaButton ? cutAreaEntity_button : "";
 }
 
 function addEditTriggersAsTextButton(rparams) {

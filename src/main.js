@@ -33,6 +33,7 @@ import * as wallTxCache from "./wall-textures/cache.js";
 import { parse as alescriptParse } from "./alescript.js";
 import { activateHTML5Mode, html5ModeActive, aleiExtendedTriggerActionLimit } from "./html5mode.js";
 import { aleiLog, logLevel, ANSI_RESET, ANSI_YELLOW } from "./log.js";
+import { floatEq, getRectLineIntersections, bresenham } from "./math.js";
 import * as pbAuth from "./pb-auth.js";
 import { checkForUpdates } from "./updates.js";
 
@@ -1966,8 +1967,181 @@ function centerImageY() {
     need_GUIParams_update = true;
 }
 
+function cutAreaEntity() {
+    if (SelectedObjects.length === 0) return;
+
+    const targets = SelectedObjects.filter(e => e._isresizable);
+    if (targets.some(e => e._class !== "bg")) throw new Error("cutAreaEntity only implemented for backgrounds");
+    const lineGuides = SelectedObjects.filter(e => !e._isresizable);
+    if (lineGuides.length !== 0 && lineGuides.length !== 2) return;
+
+    let point1, point2;
+    
+    if (lineGuides.length === 2) {
+        if (!confirm("The cut will be made along the 2 selected non-resizable objects")) return;
+        point1 = [lineGuides[0].pm.x, lineGuides[0].pm.y];
+        point2 = [lineGuides[1].pm.x, lineGuides[1].pm.y];
+    }
+    else {
+        const pointRegex = /^\s*(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)\s*$/; // accepts "1, 2" "1.5, 2" "-1.5, -2" etc but not "1., 2" or ".1, 2"
+    
+        function promptPoint(n) {
+            const match = prompt(`Enter point ${n}:`, "0, 0")?.match(pointRegex) ?? null;
+            return match === null ? null : [match[1], match[2]].map(parseFloat);
+        }
+    
+        point1 = promptPoint(1);
+        if (point1 === null) return;
+        point2 = promptPoint(2);
+        if (point2 === null) return;
+    }
+
+    if (!point1.some((p, i) => p !== point2[i])) {
+        alert("Points must be different");
+        return;
+    }
+    
+    const rayOrigin = point1;
+    const rayDirection = [0, 1].map(i => point2[i] - point1[i]); // not normalized
+
+    function addRectsForTarget(targetEntity) {
+        const {x: minX, y: minY, w, h} = targetEntity.pm;
+        if (w < 0 || h < 0) return; // lets skip these fuckass cases
+        const maxX = minX + w;
+        const maxY = minY + h;
+
+        /** @type {[[minX: number, maxX: number, minY: number, maxY: number]]} */
+        const newRects = [];
+
+        // the rect splitting code is only complete for through-cuts (this function always makes through-cuts)
+
+        const intersections = getRectLineIntersections([minX, minY], [maxX, maxY], rayOrigin, rayDirection);
+        if (intersections.length !== 2) return;
+
+        // remove rounding errors
+        for (const ipoint of intersections) {
+            if (floatEq(ipoint[0], minX, 0.0001)) ipoint[0] = minX;
+            else if (floatEq(ipoint[0], maxX, 0.0001)) ipoint[0] = maxX;
+            if (floatEq(ipoint[1], minY, 0.0001)) ipoint[1] = minY;
+            else if (floatEq(ipoint[1], maxY, 0.0001)) ipoint[1] = maxY;
+        }
+
+        // coords of cut area
+        let cutMinX = Math.min(intersections[0][0], intersections[1][0]);
+        let cutMaxX = Math.max(intersections[0][0], intersections[1][0]);
+        let cutMinY = Math.min(intersections[0][1], intersections[1][1]);
+        let cutMaxY = Math.max(intersections[0][1], intersections[1][1]);
+
+        // vertical cut
+        if (cutMinY === minY && cutMaxY === maxY) {
+            if (minX !== cutMinX) newRects.push([minX, cutMinX, minY, maxY]);
+            if (maxX !== cutMaxX) newRects.push([cutMaxX, maxX, minY, maxY]);
+        }
+        // horizontal cut or corner cut
+        else {
+            // horizontal rects. not just for horizontal cuts; one is also included for corner cuts
+            if (minY < cutMinY) newRects.push([minX, maxX, minY, cutMinY]);
+            if (cutMaxY < maxY) newRects.push([minX, maxX, cutMaxY, maxY]);
+
+            // corner cut
+            if (cutMinX !== minX || cutMaxX !== maxX) {
+                let quadrant = 0;
+                if (cutMinY !== minY) quadrant += 2; // cut is at maxY side
+                if (cutMinX !== minX) quadrant += 1; // cut is at maxX side
+                switch (quadrant) {
+                    case 0: newRects.push([cutMaxX, maxX, minY, cutMaxY]); break;
+                    case 1: newRects.push([minX, cutMinX, minY, cutMaxY]); break;
+                    case 2: newRects.push([cutMaxX, maxX, cutMinY, maxY]); break;
+                    case 3: newRects.push([minX, cutMinX, cutMinY, maxY]); break;
+                }
+            }
+        }
+
+        // this bresenham part contains bugs where some edge cases give slightly incorrect results
+
+        // add rects along cut in the cut area
+        const cellSize = window.GRID_SNAPPING;
+        const cellScale = 1 / cellSize;
+        const cellDescale = cellSize;
+        const bresenhamPoints = bresenham(
+            Math.round(intersections[0][0] * cellScale),
+            Math.round(intersections[0][1] * cellScale),
+            Math.round(intersections[1][0] * cellScale),
+            Math.round(intersections[1][1] * cellScale),
+        );
+
+        let prev = null;
+        let segStart = null;
+        const steep = rayDirection[1] > rayDirection[0];
+        const b1 = steep ? cutMinX : cutMinY;
+        const b2 = steep ? cutMaxX : cutMaxY;
+        bresenhamPoints.push(bresenhamPoints.at(-2), NaN); // the last rect might not get added without this (rect is only added when y changes)
+        for (let i = 0; i < bresenhamPoints.length; i += 2) {
+            let c1 = bresenhamPoints[i] * cellDescale;
+            let c2 = bresenhamPoints[i + 1] * cellDescale;
+            if (steep)
+                [c1, c2] = [c2, c1];
+            if (c2 !== prev) {
+                if (prev !== null) {
+                    let [start, end] = [segStart, c1];
+                    if (start > end)
+                        [start, end] = [end, start];
+                    if (prev > b1) // upper
+                        newRects.push(steep ? [b1, prev, start, end] : [start, end, b1, prev]);
+                    if (prev < b2) // lower
+                        newRects.push(steep ? [prev, b2, start, end] : [start, end, prev, b2]);
+                }
+                segStart = c1;
+                prev = c2;
+            }
+        }
+
+        newRects.filter(([minX, maxX, minY, maxY]) => minX !== maxX && minY !== maxY);
+
+        if (newRects.length === 0) return;
+    
+        // remove temporary properties to avoid copying them
+        delete targetEntity.pm.__id;
+        delete targetEntity.pm.__priority;
+
+        // remove original entity
+        const targetEnytityuindesx = es.indexOf(targetEntity);
+        ACTION_add_redo(`es[${targetEnytityuindesx}].selected=false;`);
+        ACTION_add_undo(`es[${targetEnytityuindesx}].selected=true;`);
+        ACTION_add_redo(`es[${targetEnytityuindesx}].exists=false;`);
+        ACTION_add_undo(`es[${targetEnytityuindesx}].exists=true;`);
+        targetEntity.exists = false;
+
+        // add entities for rects
+        const newEntities = new Array(newRects.length);
+        for (const [i, [newMinX, newMaxX, newMinY, newMaxY]] of newRects.entries()) {
+            const e = newEntities[i] = new E("bg");
+            Object.assign(e.pm, targetEntity.pm);
+            e.pm.x = newMinX;
+            e.pm.y = newMinY;
+            e.pm.w = newMaxX - newMinX;
+            e.pm.h = newMaxY - newMinY;
+            e.selected = targetEntity.selected;
+            const newEntityIndex = es.length + i;
+            ACTION_add_redo(`es[${newEntityIndex}].selected=true;`);
+            ACTION_add_undo(`es[${newEntityIndex}].selected=false;`);
+            ACTION_add_redo(`es[${newEntityIndex}].exists=true;`);
+            ACTION_add_undo(`es[${newEntityIndex}].exists=false;`);
+        }
+        es.push(...newEntities);
+        onEntitiesCreated(newEntities);
+    }
+    
+    ACTION_cancel();
+    targets.forEach(addRectsForTarget);
+    ACTION_finalize(false);
+    window.need_redraw = true;
+    window.need_GUIParams_update = true;
+}
+
 function addFunctionToWindow() {
     window.getImageSize = getImageSize;
+    window.cutAreaEntity = cutAreaEntity;
     window.centerImageX = centerImageX;
     window.centerImageY = centerImageY;
     window.addTriggerActionCount = addTriggerActionCount;
