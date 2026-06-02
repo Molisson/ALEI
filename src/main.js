@@ -804,6 +804,9 @@ function updateTriggers() {
     special_values_table["vehicle+none"][-1] = "- No vehicle -";
     special_values_table["vehicle+none"]["[listof]"] = "vehicle";
     mark_pairs["trigger_type_B13"] = "vehicle+none";
+
+    // change param A of "Remove beginning 'A' characters from variable 'B' (-/+)" from string to int
+    mark_pairs["trigger_type_A372"] = "int";
 }
 
 function updateObjects() {
